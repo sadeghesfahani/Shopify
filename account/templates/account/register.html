@@ -2,32 +2,197 @@
 {% load static %}
 {{ user.first_name }}
 {% block body %}
-    <div class="wrapper d-flex justify-content-center" style="direction: rtl">
-    <div class="card w-50 text-left">
 
-        <div class="card-header">
-            <h3>ثبت نام</h3>
-        </div>
+    {##}
+    {#<div class="card text-center mx-auto mt-5 mb-5 rounded w-50" style="direction: rtl">#}
+    {##}
+    {##}
+    {#        <img class="card-img  w-25 d-block h-auto rounded-circle mx-auto mt-3"#}
+    {#             src="" alt="Card image cap">#}
+    {##}
+    {#        <div class="card-body p-0">#}
+    {#            <div class="tab-content">#}
+    {##}
+    {#                <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">#}
+    {##}
+    {##}
+    {#                    <form class="m-4" method="post" action="">#}
+    {#                        <div class="form-row">#}
+    {#                            <div class="col-md-6 mb-3">#}
+    {#                                <label for="first_name">نام</label>#}
+    {#                                <input type="text" class="form-control" name="first_name" id="first_name" value=""#}
+    {#                                       oninvalid="this.setCustomValidity('لطفا نام خود را وارد کنید')" required#}
+    {#                                       onchange="this.setCustomValidity('')">#}
+    {##}
+    {#                            </div>#}
+    {#                            <div class="col-md-6 mb-3">#}
+    {#                                <label for="last_name">نام خانوادگی</label>#}
+    {#                                <input type="text" class="form-control" id="last_name" name="last_name" value=""#}
+    {#                                       required oninvalid="this.setCustomValidity('لطفا نام خانوادگی خود را وارد کنید')"#}
+    {#                                       onchange="this.setCustomValidity('')">#}
+    {##}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                        <div class="form-row">#}
+    {#                            <div class="col-12 mb-3">#}
+    {#                                <label for="email">ایمیل</label>#}
+    {#                                <input type="text" class="form-control" id="email" name="email" value=""#}
+    {#                                       required oninvalid="this.setCustomValidity('لطفا ایمیل خود را وارد کنید')"#}
+    {#                                       onchange="this.setCustomValidity('')">#}
+    {#                                <div id="email_info" class="invalid-feedback">#}
+    {#                                    لطفا یک ایمیل معتبر وارد کنید#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                            <div class="col">#}
+    {#                                <label for="password">کلمه عبور</label>#}
+    {#                                <input type="password" class="form-control" id="password" name="password" value=""#}
+    {#                                       required oninvalid="this.setCustomValidity('لطفا یک رمز عبور انتخواب کنید')"#}
+    {#                                       onchange="this.setCustomValidity('')">#}
+    {#                                <div id="password_info" class="invalid-feedback">#}
+    {#                                    حداقل ۷ کارکتر#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                        <div class="form-row">#}
+    {##}
+    {##}
+    {#                        </div>#}
+    {#                        <div class="form-row">#}
+    {#                            <div class="col">#}
+    {#                                <label for="address">آدرس</label>#}
+    {#                                <input type="text" class="form-control" id="address" name="address"#}
+    {#                                       aria-describedby="validationServer03Feedback">#}
+    {##}
+    {#                            </div>#}
+    {##}
+    {##}
+    {#                        </div>#}
+    {#                        <div class="form-group">#}
+    {##}
+    {#                        </div>#}
+    {#                        <button id="register" class="btn btn-primary" type="submit">ثبت نام</button>#}
+    {#                    </form>#}
+    {##}
+    {##}
+    {#                </div>#}
+    {##}
+    {##}
+    {#                <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">#}
+    {##}
+    {##}
+    {#                    <form class="m-4" method="post" action="">#}
+    {##}
+    {#                        <div class="form-row">#}
+    {#                            <div class="col-md-6 mb-3">#}
+    {#                                <label for="username_login">نام کاربری</label>#}
+    {#                                <input type="text" class="form-control" name="username_login" id="username_login"#}
+    {#                                       value=""#}
+    {#                                       required oninvalid="this.setCustomValidity('لطفا یک نام کاربری را وارد کنید')"#}
+    {#                                       onchange="this.setCustomValidity('')">#}
+    {##}
+    {#                            </div>#}
+    {#                            <div class="col-md-6 mb-3">#}
+    {#                                <label for="password_login">کلمه عبور</label>#}
+    {#                                <input type="password" class="form-control" id="password_login" name="password_login"#}
+    {#                                       value=""#}
+    {#                                       required oninvalid="this.setCustomValidity('لطفا رمز عبور خود را وارد کنید')"#}
+    {#                                       onchange="this.setCustomValidity('')">#}
+    {#                                <div id="password_info" class="invalid-feedback">#}
+    {#                                    حداقل ۷ کارکتر#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {##}
+    {##}
+    {#                        <div class="form-group">#}
+    {#                            <a class="" href="#"> فراموشی رمز عبور</a>#}
+    {#                        </div>#}
+    {#                        <button id="login" class="btn btn-primary" type="submit">ورود</button>#}
+    {#                    </form>#}
+    {##}
+    {##}
+    {#                </div>#}
+    {##}
+    {#            </div>#}
+    {##}
+    {#            <ul class="nav justify-content-center nav-fill p-0 m-0" id="myTab" role="tablist">#}
+    {#                {% if req == 'register' %}#}
+    {#                    <li class="nav-item border table-active" role="presentation">#}
+    {##}
+    {#                        {% else %}#}
+    {##}
+    {#                    <li class="nav-item border" role="presentation">#}
+    {#                {% endif %}#}
+    {#                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"#}
+    {#                   aria-controls="home" aria-selected="true">ثبت نام</a>#}
+    {#                </li>#}
+    {#                {% if req == 'login' %}#}
+    {#                    <li class="nav-item border table-active" role="presentation">#}
+    {##}
+    {#                        {% else %}#}
+    {#                    <li class="nav-item border" role="presentation">#}
+    {#                {% endif %}#}
+    {#                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"#}
+    {#                   aria-controls="profile" aria-selected="false">ورود</a>#}
+    {#                </li>#}
+    {##}
+    {#            </ul>#}
+    {##}
+    {##}
+    {#            #}
+    {##}
+    {##}
+    {#        </div>#}
+    {#    </div>#}
+    {##}
 
-        <div class="card-body">
 
-            <form method="post">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="form-control">
-                    <label id="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    </div>
+<div class="container-fluid">
+<div class="row">
+    <div class="wrapper col  d-flex justify-content-center m-5 p-0" style="direction: rtl">
+        <div class="card  text-right mt-4 w-100">
+
+            <div class="card-header">
+                <h3>ثبت نام</h3>
+            </div>
+
+            <div class="card-body">
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <table class="m-0 t-0 w-100">
+                        {% for field in form.visible_fields %}
+
+                                <tr class="mb-2">
+                                    <td>
+
+                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+
+                                    </td>
+                                    <td>
+                                        {{ field }}
+                                    </td>
+                                </tr>
+
+                        {% endfor %}
+                    </table>
+
+
+                    <input id="submit" type="submit" value="ثبت نام" class="btn btn-primary">
+                 {% for field in form.hidden_fields %}
+                     {{ field }}
                 {% endfor %}
-                <input type="submit" value="ثبت نام" class="btn btn-primary">
-            </form>
+                </form>
 
+            </div>
         </div>
     </div>
-    </div>
-
+</div>
+</div>
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'register.js' %}"></script>
+    <script src="{% static 'register.js' %}"></script>
 {% endblock %}
