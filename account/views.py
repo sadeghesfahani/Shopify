@@ -17,20 +17,41 @@ class RegisterView(FormView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
+        print(form)
         user = form.registerUser()
         login(self.request, user)
-        super(RegisterView, self).form_valid(form)
+        return JsonResponse({'server_response': 'succeed'})
 
-    def form_invalid(self, form):
-        super(RegisterView, self).form_invalid(form)
+    def get_form_kwargs(self):
+        kwargs = {
+            'initial': self.get_initial(),
+            'prefix': self.get_prefix(),
+        }
 
-    def get_context_data(self, **kwargs):
-        context = super(RegisterView, self).get_context_data(**kwargs)
-        context['req'] = 'register'
-        return context
+        if self.request.method in ('POST', 'PUT'):
+            # print(json.loads(self.request.body.decode("utf-8")))
+            kwargs.update({
+                'data': json.loads(self.request.body.decode("utf-8")),
+                'files': self.request.FILES,
+            })
+        return kwargs
+
+    # def get_form(self, form_class=None):
+    #     """Return an instance of the form to be used in this view."""
+    #     if form_class is None:
+    #         form_class = self.get_form_class()
+    #     return form_class(**self.get_form_kwargs())
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        print(form)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 def CheckUsernameExistence(request):
     data = json.loads(request.body.decode("utf-8"))
     return JsonResponse({'server_response': 'exist'}) if User.objects.filter(
-        email=data['username']).count() != 0 else JsonResponse({'server_response': 'free'})
+        email=data['email']).count() != 0 else JsonResponse({'server_response': 'free'})

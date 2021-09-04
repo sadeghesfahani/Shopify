@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
+
 User = get_user_model()
 
 
@@ -9,8 +10,10 @@ class RegisterForm(forms.Form):
     lname = forms.CharField(max_length=60, label='نام خانوادگی: ',
                             widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label='ایمیل: ', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='کلمه عبور: ')
-    url = forms.CharField(widget=forms.HiddenInput,initial=reverse_lazy('account:checkusernameexistance'))
+    password = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='کلمه عبور: ')
+    check_username_url = forms.CharField(widget=forms.HiddenInput,
+                                         initial=reverse_lazy('account:checkusernameexistance'), required=False)
+    register_url = forms.CharField(widget=forms.HiddenInput, initial=reverse_lazy('account:register'), required=False)
 
     def registerUser(self):
         user = User()
