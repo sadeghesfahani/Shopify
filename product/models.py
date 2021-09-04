@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils.datetime_safe import date
 
 User = get_user_model()
 
@@ -11,32 +12,33 @@ class Category(models.Model):
 
 class Discount(models.Model):
     name = models.CharField(max_length=60, null=False, blank=False)
+    discount = models.IntegerField()
     users = models.ManyToManyField(User, blank=True, null=True)
     limits = models.PositiveSmallIntegerField(blank=True, null=True)
     expire = models.DateTimeField(null=True, blank=True)
+
     USERS = 1
-    CONDITIONAL = 2
-    FIRST_COME_FIRST_SERVE = 3
-    DISCOUNT_TYPE = [
+    FIRST_COME_FIRST_SERVE = 2
+    DISCOUNT_CONDITION = [
         (USERS, 'target users'),
-        (CONDITIONAL, 'expire date'),
         (FIRST_COME_FIRST_SERVE, 'first come first serve'),
     ]
-    discount_type = models.PositiveSmallIntegerField(choices=DISCOUNT_TYPE)
+    discount_type = models.PositiveSmallIntegerField(choices=DISCOUNT_CONDITION)
 
     def is_valid(self, user):
         if self.discount_type == self.FIRST_COME_FIRST_SERVE:
-            return True if self.isAnyThingLeft() else False
+            return True if self.isAnyThingLeft() and self.isTimeLeft() else False
         elif self.discount_type == self.USERS:
             return True if self.isUserAllowed(user) else False
-        elif self.discount_type == self.CONDITIONAL:
-            return True  # todo : take care of conditional discount
 
     def isAnyThingLeft(self):
         return True if self.limits > 0 else False
 
     def isUserAllowed(self, user):
         return True if user in self.users else False
+
+    def isTimeLeft(self):
+        return True if date.today() < self.expire else False
 
 
 class Product(models.Model):
@@ -63,4 +65,3 @@ class Price(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.IntegerField()
     date = models.DateField()
-

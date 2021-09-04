@@ -1,5 +1,5 @@
 {% extends 'account/layout.html' %}
-
+{% load static %}
 {{ user.first_name }}
 {% block body %}
     <div class="wrapper d-flex justify-content-center" style="direction: rtl">
@@ -26,4 +26,8 @@
     </div>
     </div>
 
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'register.js' %}"></script>
 {% endblock %}
