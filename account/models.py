@@ -1,7 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from department.models import Department
 
 
 class CustomUserManager(BaseUserManager):
@@ -74,3 +73,8 @@ class User(AbstractUser):
     def promoteUserToDepartmentAdmin(self):
         self.is_staff = True
         self.is_department_admin = True
+
+
+class Address(models.Model):
+    address = models.CharField(max_length=400, blank=False, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
