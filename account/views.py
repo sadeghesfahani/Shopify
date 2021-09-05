@@ -1,17 +1,35 @@
-import json
-
 from django.contrib.auth import login
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 from django.contrib.auth import get_user_model
+from django.views.generic.base import View, TemplateView
 
 from account.forms import RegisterForm
+
+import json
+
+from shopify_first_try import settings
 
 User = get_user_model()
 
 
-class RegisterView(FormView):
+class AjaxMixin(FormView):
+    def get_form_kwargs(self):
+        kwargs = {
+            'initial': self.get_initial(),
+            'prefix': self.get_prefix(),
+        }
+
+        if self.request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'data': json.loads(self.request.body.decode("utf-8")),
+                'files': self.request.FILES,
+            })
+        return kwargs
+
+
+class RegisterView(AjaxMixin, FormView):
     form_class = RegisterForm
     template_name = 'account/register.html'
     success_url = reverse_lazy('home')
@@ -22,36 +40,27 @@ class RegisterView(FormView):
         login(self.request, user)
         return JsonResponse({'server_response': 'succeed'})
 
-    def get_form_kwargs(self):
-        kwargs = {
-            'initial': self.get_initial(),
-            'prefix': self.get_prefix(),
-        }
-
-        if self.request.method in ('POST', 'PUT'):
-            # print(json.loads(self.request.body.decode("utf-8")))
-            kwargs.update({
-                'data': json.loads(self.request.body.decode("utf-8")),
-                'files': self.request.FILES,
-            })
-        return kwargs
-
-    # def get_form(self, form_class=None):
-    #     """Return an instance of the form to be used in this view."""
-    #     if form_class is None:
-    #         form_class = self.get_form_class()
-    #     return form_class(**self.get_form_kwargs())
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        print(form)
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    def form_invalid(self, form):
+        user = form.getUser()
+        if user is not None:
+            login(self.request, user)
+            return JsonResponse({'server_response': 'succeed'})
+        return JsonResponse({'server_response': 'fail'})
 
 
 def CheckUsernameExistence(request):
-    data = json.loads(request.body.decode("utf-8"))
+    data = request.GET
     return JsonResponse({'server_response': 'exist'}) if User.objects.filter(
-        email=data['email']).count() != 0 else JsonResponse({'server_response': 'free'})
+        username=data['email']).count() != 0 else JsonResponse({'server_response': 'free'})
+
+
+class GeneralInfo(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(self.loadData())
+
+    @staticmethod
+    def loadData():
+        data = {"register": settings.BASE_URL + reverse_lazy('account:register'),
+                'checkuserexistance': settings.BASE_URL + reverse_lazy('account:checkuserexistance')
+                }
+        return data

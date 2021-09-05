@@ -1,52 +1,95 @@
 const fNameField = document.getElementById('id_fname')
 const lNameField = document.getElementById('id_lname')
-const email = document.getElementById('id_email')
-const password = document.getElementById('id_password')
-const submitButton = document.getElementById('submit')
-const check_username_url = document.getElementById('id_check_username_url').value
-const register_url = document.getElementById('id_register_url').value
-const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
-email.addEventListener('change', handleChange);
-submitButton.addEventListener('click', (event) => handleRegister(event))
+const register_email = document.getElementById('id_email')
+const register_password = document.getElementById('id_password')
+const registerSubmitButton = document.getElementById('register_submit')
+const loginSubmitButton = document.getElementById('login_submit')
+const registerCsrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+const loginCsrf = document.getElementsByName('csrfmiddlewaretoken')[1].value
+const login_email = document.getElementById('id_login_email')
+const login_password = document.getElementById('id_login_password')
+window.addEventListener('DOMContentLoaded', fetchRequiredUrls)
+register_email.addEventListener('change', handleChange);
+registerSubmitButton.addEventListener('click', (event) => handleRegister(event))
+loginSubmitButton.addEventListener('click', (event) => handleLogin(event))
 
 
-async function handleRegister(e) {
+async function fetchRequiredUrls() {
+    const data = await fetch('http://127.0.0.1:8000/account/generalinfo')
+    const urls = await data.json()
+    window.urls = await urls
+}
+
+async function handleLogin(e) {
     e.preventDefault()
-    const option = prepareOption()
-    const response = await fetch(register_url, option)
+    const option = prepareLoginOption()
+    const response = await fetch(window.urls['register'], option)
     const data = await response.json()
-    // alert(data['server_response'])
-
+    alert(data['server_response'])
 }
 
-async function handleChange() {
-    const option = prepareOption()
-    const response = await fetch(check_username_url, option)
-    const data = await response.json()
-}
-
-function prepareOption() {
+function prepareLoginOption() {
     const option = {
         method: 'POST',
-        body: prepareData(),
-        headers: prepareHeaders(),
+        body: prepareLoginData(),
+        headers: prepareLoginHeaders(),
     }
     return option
 
 }
 
-function prepareData() {
+function prepareLoginData() {
     const data = JSON.stringify({
-        'email': email.value,
-        'fname': fNameField.value,
-        'lname': lNameField.value,
-        'password': password.value
+        'email': login_email.value,
+        'password': login_password.value
     })
     return data
 }
 
-function prepareHeaders() {
+function prepareLoginHeaders() {
     const header = new Headers()
-    header.append('X-CSRFToken', csrf)
+    header.append('X-CSRFToken', loginCsrf)
     return header
 }
+
+async function handleRegister(e) {
+    e.preventDefault()
+    const option = prepareRegisterOption()
+    const response = await fetch(window.urls['register'], option)
+    const data = await response.json()
+    alert(data['server_response'])
+}
+
+
+function prepareRegisterOption() {
+    const option = {
+        method: 'POST',
+        body: prepareRegisterData(),
+        headers: prepareRegisterHeaders(),
+    }
+    return option
+
+}
+
+function prepareRegisterData() {
+    const data = JSON.stringify({
+        'email': register_email.value,
+        'fname': fNameField.value,
+        'lname': lNameField.value,
+        'password': register_password.value
+    })
+    return data
+}
+
+function prepareRegisterHeaders() {
+    const header = new Headers()
+    header.append('X-CSRFToken', registerCsrf)
+    return header
+}
+
+async function handleChange() {
+        const response = await fetch(window.urls['checkuserexistance'] + '?email=' + login_email.value)
+    const data = await response.json()
+    alert(data['server_response'])
+}
+

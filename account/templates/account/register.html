@@ -147,52 +147,52 @@
     {##}
 
 
-<div class="container-fluid">
-<div class="row">
-    <div class="wrapper col  d-flex justify-content-center m-5 p-0" style="direction: rtl">
-        <div class="card  text-right mt-4 w-100">
-
-            <div class="card-header">
-                <h3>ثبت نام</h3>
-            </div>
-
-            <div class="card-body">
-
-                <form method="post">
-                    {% csrf_token %}
-
-                    <table class="m-0 t-0 w-100">
-                        {% for field in form.visible_fields %}
-
-                                <tr class="mb-2">
-                                    <td>
-
-                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-
-
-                                    </td>
-                                    <td>
-                                        {{ field }}
-                                    </td>
-                                </tr>
-
-                        {% endfor %}
-                    </table>
-
-
-                    <input id="submit" type="submit" value="ثبت نام" class="btn btn-primary">
-                 {% for field in form.hidden_fields %}
-                     {{ field }}
-                {% endfor %}
-                </form>
-
-            </div>
-        </div>
-    </div>
-</div>
-</div>
+{#<div class="container-fluid">#}
+{#<div class="row">#}
+{#    <div class="wrapper col  d-flex justify-content-center m-5 p-0" style="direction: rtl">#}
+{#        <div class="card  text-right mt-4 w-100">#}
+{##}
+{#            <div class="card-header">#}
+{#                <h3>ثبت نام</h3>#}
+{#            </div>#}
+{##}
+{#            <div class="card-body">#}
+{##}
+{#                <form method="post">#}
+{#                    {% csrf_token %}#}
+{##}
+{#                    <table class="m-0 t-0 w-100">#}
+{#                        {% for field in form.visible_fields %}#}
+{##}
+{#                                <tr class="mb-2">#}
+{#                                    <td>#}
+{##}
+{#                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>#}
+{##}
+{##}
+{#                                    </td>#}
+{#                                    <td>#}
+{#                                        {{ field }}#}
+{#                                    </td>#}
+{#                                </tr>#}
+{##}
+{#                        {% endfor %}#}
+{#                    </table>#}
+{##}
+{##}
+{#                    <input id="submit" type="submit" value="ثبت نام" class="btn btn-primary">#}
+{#                 {% for field in form.hidden_fields %}#}
+{#                     {{ field }}#}
+{#                {% endfor %}#}
+{#                </form>#}
+{##}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#</div>#}
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'register.js' %}"></script>
+{#    <script src="{% static 'register.js' %}"></script>#}
 {% endblock %}

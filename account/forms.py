@@ -1,23 +1,17 @@
 from django import forms
-from django.contrib.auth import get_user_model
-from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model, authenticate
 
 User = get_user_model()
 
 
 class RegisterForm(forms.Form):
-    fname = forms.CharField(max_length=60, label='نام: ', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    lname = forms.CharField(max_length=60, label='نام خانوادگی: ',
-                            widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(label='ایمیل: ', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='کلمه عبور: ')
-    check_username_url = forms.CharField(widget=forms.HiddenInput,
-                                         initial=reverse_lazy('account:checkusernameexistance'), required=False)
-    register_url = forms.CharField(widget=forms.HiddenInput, initial=reverse_lazy('account:register'), required=False)
+    fname = forms.CharField(max_length=60)
+    lname = forms.CharField(max_length=60)
+    email = forms.EmailField()
+    password = forms.CharField()
 
     def registerUser(self):
         user = User()
-
         return self.setUserData(user)
 
     def setUserData(self, user):
@@ -28,4 +22,10 @@ class RegisterForm(forms.Form):
         user.user_type = User.CUSTOMER
         user.set_password(self.cleaned_data['password'])
         user.save()
+
         return user
+
+    def getUser(self):
+        return authenticate(username=self.cleaned_data['email'], password=self.cleaned_data['password'])
+
+
