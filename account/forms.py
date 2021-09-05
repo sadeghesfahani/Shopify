@@ -27,5 +27,3 @@ class RegisterForm(forms.Form):
 
     def getUser(self):
         return authenticate(username=self.cleaned_data['email'], password=self.cleaned_data['password'])
-
-

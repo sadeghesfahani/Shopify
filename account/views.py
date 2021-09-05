@@ -1,15 +1,12 @@
+import json
 from django.contrib.auth import login
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 from django.contrib.auth import get_user_model
-from django.views.generic.base import View, TemplateView
-
-from account.forms import RegisterForm
-
-import json
-
+from django.views.generic.base import TemplateView
 from shopify_first_try import settings
+from account.forms import RegisterForm
 
 User = get_user_model()
 
@@ -26,16 +23,14 @@ class AjaxMixin(FormView):
                 'data': json.loads(self.request.body.decode("utf-8")),
                 'files': self.request.FILES,
             })
+
         return kwargs
 
 
-class RegisterView(AjaxMixin, FormView):
+class AuthenticationView(AjaxMixin, FormView):
     form_class = RegisterForm
-    template_name = 'account/register.html'
-    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        print(form)
         user = form.registerUser()
         login(self.request, user)
         return JsonResponse({'server_response': 'succeed'})
@@ -60,7 +55,7 @@ class GeneralInfo(TemplateView):
 
     @staticmethod
     def loadData():
-        data = {"register": settings.BASE_URL + reverse_lazy('account:register'),
+        data = {"register": settings.BASE_URL + reverse_lazy('account:authentication'),
                 'checkuserexistance': settings.BASE_URL + reverse_lazy('account:checkuserexistance')
                 }
         return data
