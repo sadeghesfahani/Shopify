@@ -41,10 +41,16 @@ class Discount(models.Model):
         return True if date.today() < self.expire else False
 
 
+class Store(models.Model):
+    name = models.CharField(max_length=120)
+    media = models.ImageField()
+
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    description = models.CharField(max_length=1200)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,null=False,blank=False)
+    description = models.CharField(max_length=1200,blank=True,null=True)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, default=1)
 
 
 class Media(models.Model):
@@ -55,7 +61,7 @@ class Media(models.Model):
     INLINE = 3
     IMAGE_TYPE = [
         (MAIN, 'main picture'),
-        (OTHER, 'other product pictures'),
+        (OTHER, 'other store pictures'),
         (INLINE, 'in content pictures'),
     ]
     picture_type = models.PositiveSmallIntegerField(choices=IMAGE_TYPE)

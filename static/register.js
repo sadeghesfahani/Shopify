@@ -92,6 +92,5 @@ function prepareRegisterHeaders() {
 async function handleChange() {
         const response = await fetch(window.urls['checkuserexistance'] + '?email=' + register_email.value)
     const data = await response.json()
-    alert(data['server_response'])
 }
 
