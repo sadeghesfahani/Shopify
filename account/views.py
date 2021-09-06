@@ -1,14 +1,11 @@
 import json
-from django.contrib.auth import login
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import FormView
-from django.contrib.auth import get_user_model
 from django.views.generic.base import TemplateView
 from shopify_first_try import settings
 from account.forms import RegisterForm
-
-User = get_user_model()
+from .users import *
 
 
 class AjaxMixin(FormView):
@@ -31,15 +28,26 @@ class AuthenticationView(AjaxMixin, FormView):
     form_class = RegisterForm
 
     def form_valid(self, form):
-        user = form.registerUser()
-        login(self.request, user)
-        return JsonResponse({'server_response': 'succeed'})
+        try:
+            self.authenticateUser(form)
+            return JsonResponse({'server_response': 'succeed'})
+        except:
+            return JsonResponse({'server_response': 'fail'})
+
+    def authenticateUser(self, form):
+        user = UserDataStructure(**form.data)
+        if form.data.get('action') == 'login':
+            self.logUserIn(user)
+        else:
+            login(self.request, self.registerUser(user))
+
+    def logUserIn(self, user):
+        BaseUserModel(self.request).logUserIn(user)
+
+    def registerUser(self, user):
+        return BaseUserModel(self.request).register(user)
 
     def form_invalid(self, form):
-        user = form.getUser()
-        if user is not None:
-            login(self.request, user)
-            return JsonResponse({'server_response': 'succeed'})
         return JsonResponse({'server_response': 'fail'})
 
 
@@ -55,7 +63,7 @@ class GeneralInfo(TemplateView):
 
     @staticmethod
     def loadData():
-        data = {"register": settings.BASE_URL + reverse_lazy('account:authentication'),
+        data = {"authentication": settings.BASE_URL + reverse_lazy('account:authentication'),
                 'checkuserexistance': settings.BASE_URL + reverse_lazy('account:checkuserexistance')
                 }
         return data

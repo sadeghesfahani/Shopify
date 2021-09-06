@@ -23,7 +23,7 @@ async function fetchRequiredUrls() {
 async function handleLogin(e) {
     e.preventDefault()
     const option = prepareLoginOption()
-    const response = await fetch(window.urls['register'], option)
+    const response = await fetch(window.urls['authentication'], option)
     const data = await response.json()
     alert(data['server_response'])
 }
@@ -41,7 +41,8 @@ function prepareLoginOption() {
 function prepareLoginData() {
     const data = JSON.stringify({
         'email': login_email.value,
-        'password': login_password.value
+        'password': login_password.value,
+        'action': 'login',
     })
     return data
 }
@@ -55,7 +56,7 @@ function prepareLoginHeaders() {
 async function handleRegister(e) {
     e.preventDefault()
     const option = prepareRegisterOption()
-    const response = await fetch(window.urls['register'], option)
+    const response = await fetch(window.urls['authentication'], option)
     const data = await response.json()
     alert(data['server_response'])
 }
@@ -74,9 +75,10 @@ function prepareRegisterOption() {
 function prepareRegisterData() {
     const data = JSON.stringify({
         'email': register_email.value,
-        'fname': fNameField.value,
-        'lname': lNameField.value,
-        'password': register_password.value
+        'first_name': fNameField.value,
+        'last_name': lNameField.value,
+        'password': register_password.value,
+        'action': 'register',
     })
     return data
 }
@@ -88,7 +90,7 @@ function prepareRegisterHeaders() {
 }
 
 async function handleChange() {
-        const response = await fetch(window.urls['checkuserexistance'] + '?email=' + login_email.value)
+        const response = await fetch(window.urls['checkuserexistance'] + '?email=' + register_email.value)
     const data = await response.json()
     alert(data['server_response'])
 }

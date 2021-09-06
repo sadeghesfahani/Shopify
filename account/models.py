@@ -38,7 +38,7 @@ class User(AbstractUser):
     CUSTOMER = 0
     ADMIN = 1
     DEPARTMENT_ADMIN = 2
-    MAIN_DEPARTMENT = 0
+    MAIN_DEPARTMENT = 3
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=100)
     avatar = models.ImageField(null=True, blank=True)
