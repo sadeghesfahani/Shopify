@@ -79,4 +79,5 @@ class CategoryDataStructure:
 
     def __init__(self, name, parent=None, **kwargs):
         self.name = name
-        self.parent = CategoryDataStructure.store.category.selectById(parent)
+        self.parent = None if parent is None else CategoryDataStructure.store.category.selectById(parent)
+        # self.parent = CategoryDataStructure.store.category.selectById(parent)

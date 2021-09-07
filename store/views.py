@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from rest_framework.response import Response
+from rest_framework import mixins,generics
 from rest_framework.views import APIView
 from .store import *
 from store.serializers import *
@@ -55,4 +56,13 @@ class StoreApi(APIView):
         else:
             query_set = self.store.store_class.objects.all()
             serialized = CategorySerializer(query_set, many=True)
+        return Response(serialized.data)
+
+
+class MenuApi(APIView):
+    store = StoreObj()
+
+    def get(self, request, *args, **kwargs):
+        query_set = self.store.category_class.objects.all()
+        serialized = MenuSerializer(query_set, many=True)
         return Response(serialized.data)

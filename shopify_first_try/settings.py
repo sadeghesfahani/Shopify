@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'department',
     'store',
     'rest_framework',
+    'corsheaders',
 
 ]
 
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'shopify_first_try.urls'
@@ -126,3 +128,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'account.User'
 BASE_URL = 'http://127.0.0.1:8000'
 # AUTHENTICATION_BACKENDS = ['shopify_first_try.auth.CustomBackend']
+
+ALLOWED_HOSTS=['*']
+
+CORS_ORIGIN_ALLOW_ALL = True

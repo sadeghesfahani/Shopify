@@ -20,3 +20,10 @@ class StoreSerializer(serializers.ModelSerializer):
         model = Store
         fields = '__all__'
         depth = 1
+
+
+class MenuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        depth = 3

@@ -6,4 +6,5 @@ urlpatterns = [
     path('category/<int:category_id>', CategoryApi.as_view(), name='category'),
     path('store/<int:store_id>', StoreApi.as_view(), name='category'),
     path('store', StoreApi.as_view(), name='category'),
+    path('menu', MenuApi.as_view(), name='menu'),
 ]
