@@ -7,3 +7,10 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
         depth = 3
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'
+        depth = 1

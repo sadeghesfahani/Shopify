@@ -2,7 +2,7 @@ from .models import *
 from django.shortcuts import get_object_or_404
 
 
-class Store:
+class StoreObj:
     category_class = Category
     product_class = Product
 
@@ -20,7 +20,7 @@ class Product:
 
     @staticmethod
     def selectById(product_id):
-        return Store.product_class.objects.get(id=product_id)
+        return StoreObj.product_class.objects.get(id=product_id)
 
     def category(self, category_id):
         self.query_set['category_id'] = category_id
@@ -39,44 +39,29 @@ class Product:
         return self
 
     def fetch(self):
-        query_set = Store.product_class.objects.filter(**self.query_set).order_by(
-            self.order_by) if self.order_by else Store.product_class.objects.filter(**self.query_set)
+        query_set = StoreObj.product_class.objects.filter(**self.query_set).order_by(
+            self.order_by) if self.order_by else StoreObj.product_class.objects.filter(**self.query_set)
 
         return query_set[self.limits[0]:self.limits[1]] if self.limits else query_set
+
+    @staticmethod
+    def addProduct(product_data_structure):
+        return StoreObj.product_class(**product_data_structure.__dict__)
+
+    @staticmethod
+    def editProduct(product_data_structure,product_id):
+        return StoreObj.product_class.objects.get(pk=product_id).update(**product_data_structure.__dict__)
+
+
 
 
 class Category:
     pass
 
-    # class Product:
-    #     @staticmethod
-    #     def byProductId(product_id):
-    #         return get_object_or_404(Store.product_class, pk=product_id)
-    #
-    #     @staticmethod
-    #     def byCategoryId(category_id):
-    #         return get_object_or_404(Store.product_class, category_id=category_id)
-    #
-    #     @staticmethod
-    #     def byStoreId(store_id):
-    #         return get_object_or_404(Store.product_class, store_id=store_id)
-    #
-    #     @staticmethod
-    #     def getProductsOfStoreByStoreId(store_id):
-    #         return Store.product_class.objects.get(store_id=store_id)
-    #
-    #     @staticmethod
-    #     def getProductById(product_id):
-    #         return Store.product_class.objects.get(id=product_id)
-    #
-    #     @staticmethod
-    #     def getAllProducts():
-    #         return Store.category_class.objects.all()
-    #
-    #     @staticmethod
-    #     def getCategoryProductsByCategoryId(category_id):
-    #         return Store.product_class.objects.filter(category_id=category_id)
-    #
-    #     @staticmethod
-    #     def getCategoryProductsOfStore(category_id, store_id):
-    #         return Store.product_class.objects.filter(category_id=category_id, store_id=store_id)
+
+class ProductDataStructure:
+    def __init__(self, name, category, description, store):
+        self.name = name
+        self.category = category
+        self.description = description
+        self.store = store
