@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 class StoreObj:
     category_class = Category
     product_class = Product
+    store_class = Store
 
     def __init__(self):
         self.product = Product()
@@ -49,14 +50,20 @@ class Product:
         return StoreObj.product_class(**product_data_structure.__dict__)
 
     @staticmethod
-    def editProduct(product_data_structure,product_id):
+    def editProduct(product_data_structure, product_id):
         return StoreObj.product_class.objects.get(pk=product_id).update(**product_data_structure.__dict__)
 
 
-
-
 class Category:
-    pass
+
+    def addCategory(self, category_data_structure):
+        category = StoreObj.category_class(**category_data_structure.__dict__)
+        category.save()
+        return category
+
+    @staticmethod
+    def selectById(category_id):
+        return StoreObj.category_class.objects.get(pk=category_id)
 
 
 class ProductDataStructure:
@@ -65,3 +72,11 @@ class ProductDataStructure:
         self.category = category
         self.description = description
         self.store = store
+
+
+class CategoryDataStructure:
+    store = StoreObj()
+
+    def __init__(self, name, parent=None, **kwargs):
+        self.name = name
+        self.parent = CategoryDataStructure.store.category.selectById(parent)

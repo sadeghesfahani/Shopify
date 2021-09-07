@@ -16,21 +16,43 @@ class HomeView(TemplateView):
         return context
 
 
-class HomeApi(APIView):
+class ProductApi(APIView):
     store = StoreObj()
 
-    def get(self, request):
-        query_set = self.store.product.category(1).fetch()
-        serialized = ProductSerializer(query_set,many=True)
+    def get(self, request,*args, **kwargs):
+        query_set = self.store.product.category(category_id=kwargs)
+        serialized = ProductSerializer(query_set, many=True)
         return Response(serialized.data)
-
-
 
 
 class CategoryApi(APIView):
     store = StoreObj()
 
-    def get(self, request,*args,**kwargs):
-        query_set = self.store.product.category(kwargs['category_id']).fetch()
-        serialized = ProductSerializer(query_set,many=True)
+    def get(self, request, *args, **kwargs):
+        if 'category_id' in kwargs:
+            query_set = self.store.product.category(kwargs['category_id']).fetch()
+            serialized = ProductSerializer(query_set, many=True)
+        else:
+            query_set = self.store.category_class.objects.all()
+            serialized = CategorySerializer(query_set, many=True)
+        return Response(serialized.data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            category = self.store.category.addCategory(CategoryDataStructure(**serializer.data))
+            serializer = CategorySerializer(category)
+            return Response(serializer.data)
+
+
+class StoreApi(APIView):
+    store = StoreObj()
+
+    def get(self, request, *args, **kwargs):
+        if 'store_id' in kwargs:
+            query_set = self.store.product.store(kwargs['store_id']).fetch()
+            serialized = ProductSerializer(query_set, many=True)
+        else:
+            query_set = self.store.store_class.objects.all()
+            serialized = CategorySerializer(query_set, many=True)
         return Response(serialized.data)
