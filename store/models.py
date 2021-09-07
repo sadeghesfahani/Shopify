@@ -7,7 +7,7 @@ User = get_user_model()
 
 class Category(models.Model):
     name = models.CharField(max_length=60, blank=False, null=False)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE,blank=True,null=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
 
 
 class Discount(models.Model):
@@ -43,20 +43,24 @@ class Discount(models.Model):
 
 class Store(models.Model):
     name = models.CharField(max_length=120)
-    media = models.ImageField(null=True,blank=True)
+    media = models.ImageField(null=True, blank=True)
+    admins = models.ManyToManyField(User)
 
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,null=False,blank=False)
-    description = models.CharField(max_length=1200,blank=True,null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False, blank=False)
+    description = models.CharField(max_length=1200, blank=True, null=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, default=1)
+
     def __str__(self):
         return self.name
 
+
 class Media(models.Model):
     picture = models.ImageField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     MAIN = 1
     OTHER = 2
     INLINE = 3

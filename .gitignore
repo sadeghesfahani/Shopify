@@ -1,2 +1,6 @@
 /venv/
 /.idea/
+/frontend/shopify/node_modules/
+*/__pycache__/*
+db.sqlite3
+*.pyc
