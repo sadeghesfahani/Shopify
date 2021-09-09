@@ -7,7 +7,6 @@ An open source ecommerce project powered by Django as backend and React as front
 backend foundation laid on Django and RestFramework API
 to install Django
 
-`<addr>` element here instead.
+`pip install django`
 
-> We're living the future so
 
