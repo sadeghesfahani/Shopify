@@ -28,3 +28,10 @@ for first runing django project you need to create database based on django mode
 now it's time to run our React project, to do so jump into the front end directory and use `npm start` and here we go! enjoy your hacking !!!
 
 
+#API
+all the API interfaces in store application are provided by a core Object called Store into store.py module. this module does the CRUD operations for you by simple and chainable methods. first you need to specify what you need by it's searching methods and when your specifications finished fetch them all.
+
+##products
+to get the product(s) you need they are some usefull methods you can use:
+*selectById: you can simply specify the id of product you need to get information by this method
+
