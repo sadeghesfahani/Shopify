@@ -33,5 +33,5 @@ all the API interfaces in store application are provided by a core Object called
 
 ##products
 to get the product(s) you need they are some usefull methods you can use:
-*selectById: you can simply specify the id of product you need to get information by this method
+* selectById: you can simply specify the id of product you need to get information by this method
 
