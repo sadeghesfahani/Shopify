@@ -6,6 +6,9 @@ An open source ecommerce project powered by Django as backend and React as front
 ## Backend
 backend foundation laid on Django and RestFramework API
 
-to install Django use `pip install django` and to install all its dependencies use `pip install -r requirements.txt`
+once after cloning package you need to make an environment to isolate the application from your gerneral python invironment
+user `py -m venv whatevername` to make your own env.
+
+not it's time to install Django by using `pip install django` and install all its dependencies using `pip install -r requirements.txt`
 
 
