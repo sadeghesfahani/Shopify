@@ -18,5 +18,13 @@ if you wanna stick to the original frontend provided by the project follow the f
 first thing first, you need to [download](https://nodejs.org/en/) and install node.js to provide you with `npm`.
 to install React library open your terminal and head into 
 >project-dir/frontend
+and use `npm install` to install react and all its dependencies once.
+
+
+## make project working
+to make the project working we need to have both Django and React open simultaniusly.
+for first runing django project you need to create database based on django models. use these two commands to create data schema:
+`py manage.py makemigrations` and `py manage.py migrate` then to start the django project use `py manage.py runserver`.
+now it's time to run our React project, to do so jump into the front end directory and use `npm start` and here we go! enjoy your hacking !!!
 
 
