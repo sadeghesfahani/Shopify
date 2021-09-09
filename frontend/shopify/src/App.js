@@ -1,6 +1,8 @@
 import './App.css';
 import Navbar from "./components/Navbar";
 import React, {Component} from 'react';
+import {BrowserRouter, Router, Route, Link, Switch} from "react-router-dom";
+import Category from "./components/category";
 
 class App extends Component {
     constructor(props) {
@@ -15,10 +17,17 @@ class App extends Component {
 
     render() {
         return (
-            <div>
-                <Navbar menu={this.state.menu}/>
-            </div>
-        );
+
+
+<div>
+
+            <Navbar menu={this.state.menu}/>
+            <Route path='/category/:id' render={(props)=><Category {...props} category={this.state.menu}/>}/>
+
+</div>
+
+    )
+        ;
     }
 }
 

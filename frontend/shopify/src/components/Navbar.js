@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link,BrowserRouter as Router} from "react-router-dom";
 
 class Navbar extends Component {
     constructor(props) {
@@ -35,13 +36,13 @@ class Navbar extends Component {
             if (this.hasChildren(menu)) {
                 return (
                     <li key={index} className="nav-item dropdown">
-                        <a className="nav-link dropdown-toggle" href="#" id={menu.name} role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i className="dropdown-toggle d-inline-block position-relative float-right align-self-center" style={{"lineHeight":"45px"}} id={menu.name} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
+                        <Link className="nav-link d-inline-block position-relative " to={`/category/${menu.id}`} id={menu.name} >
                             {menu.name}
-                        </a>
+                        </Link>
                         <div className="dropdown-menu" aria-labelledby={menu.name}>
                             {this.state.menuMap[menu.id].map((subMenu,subIndex)=>{
-                                return <a key={subIndex} className="dropdown-item" href="#">{this.getSubMenu(subMenu)}</a>
+                                return <Link key={subIndex} className="dropdown-item" to={`/category/${this.getSubMenu(subMenu,'id')}`}>{this.getSubMenu(subMenu,'name')}</Link>
                             })}
                         </div>
                     </li>
@@ -49,7 +50,7 @@ class Navbar extends Component {
             } else {
                 return (
                         <li key={index} className="nav-item active">
-                            <a className="nav-link" href="#">{menu.name} <span className="sr-only"/></a>
+                            <Link className="nav-link" to={`/category/${menu.id}`}>{menu.name} <span className="sr-only"/></Link>
                         </li>
                 )
             }
@@ -57,16 +58,17 @@ class Navbar extends Component {
         }
     }
 
-    getSubMenu(subMenu){
+    getSubMenu(subMenu,type){
         for (let menu of this.props.menu){
-            if (menu.id===subMenu) return menu.name
+            if (menu.id===subMenu && type === 'name') return menu.name
+            if (menu.id===subMenu && type === 'id') return menu.id
         }
     }
     render() {
         if (this.props.menu.length === 0) return null
         return (
             <nav className='navbar navbar-expand-lg navbar-light bg-light'>
-                <a className="navbar-brand" href="#">something</a>
+                <Link className="navbar-brand" to={''}>something</Link>
                 <button className="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
