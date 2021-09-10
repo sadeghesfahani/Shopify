@@ -1,10 +1,14 @@
 from django.contrib.auth import get_user_model
 from account.models import User
 from store.models import Store as StoreModel, Product as ProductModel, Category as CategoryModel
-from store.serializers import ProductSerializer
 
 
 class Market:
+    """
+    this class has been made to have full control over the business model and provide flexibility between separated
+    models yet integrated business model, based on single responsibility principle and open-close principle, all classes
+    build separately to have the least interaction with each other that may cause fragility during adding new features.
+    """
     def __init__(self, request):
         self.product = Product(request)
         self.store = Store(request)
@@ -123,10 +127,7 @@ class Product(BaseMarketObjectManager):
         return new_product
 
     def modify(self, product_id, product_data):
-        print("here")
         product_to_modify = self.selectById(product_id)
-        print(product_to_modify)
-        # product_to_modify = product_to_modify.update(**ProductDataStructure(self.request, **product_data).__dict__)
         product_to_modify.__dict__.update(**ProductDataStructure(self.request, **product_data).__dict__)
         product_to_modify.save()
         return product_to_modify
@@ -137,6 +138,9 @@ class Category(BaseMarketObjectManager):
 
 
 class StoreDataStructure:
+    """
+    this data structure will always come into place to avoid and handle unexpected errors during transforming information
+    """
     def __init__(self, request, name, description, admins=None):
         self.name = name
         self.description = description
@@ -152,6 +156,9 @@ class StoreDataStructure:
 
 
 class ProductDataStructure:
+    """
+    this data structure will always come into place to avoid and handle unexpected errors during transforming information
+    """
     def __init__(self, request, name, category, description, store):
         market = Market(request)
         self.name = name

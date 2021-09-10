@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 from rest_framework.decorators import action
@@ -78,24 +77,18 @@ class MenuApi(APIView):
 
 class ProductAPI(viewsets.ViewSet):
 
-    def list(self, request):
+    @staticmethod
+    def list(request):
         queryset = Market(request).product.fetch()
         serialized = ProductSerializer(queryset, many=True)
         return Response(serialized.data)
 
-    # @action(detail=False)
-    # def product(self, request, *args, **kwargs):
-    #     print(**kwargs)
-    #     print(request.GET)
-    #     market = Market(request)
-    #     queryset = market.product.fetch()
-    #     serialized = ProductSerializer(queryset, many=True)
-    #     return Response(serialized.data)
-    def retrieve(self, request, pk=None):
+    @staticmethod
+    def retrieve(request, pk=None):
         market = Market(request)
-        return Response (ProductSerializer(market.product.selectById(pk)).data)
+        return Response(ProductSerializer(market.product.selectById(pk)).data)
 
-    def create(self, request, pk=None):
+    def create(self, request):
         market = Market(request)
         new_product = market.product.addNew(product_data=self.prepareData(market))
         serialized_new_product = ProductSerializer(new_product)
@@ -106,7 +99,6 @@ class ProductAPI(viewsets.ViewSet):
         modified_product = market.product.modify(pk, self.prepareData(market))
         serialized_modified_product = ProductSerializer(modified_product)
         return Response(serialized_modified_product.data)
-
 
     def prepareData(self, market):
         store = market.admin.getStore()
