@@ -43,7 +43,7 @@ class Discount(models.Model):
 
 class Store(models.Model):
     name = models.CharField(max_length=120)
-    media = models.ImageField(null=True, blank=True)
+    description = models.CharField(max_length=600)
     admins = models.ManyToManyField(User)
 
 
@@ -61,6 +61,7 @@ class Media(models.Model):
     picture = models.ImageField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
+    store = models.ForeignKey(Store,on_delete=models.CASCADE,blank=True,null=True)
     MAIN = 1
     OTHER = 2
     INLINE = 3
