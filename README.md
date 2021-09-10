@@ -34,10 +34,10 @@ all the API interfaces in store application are provided by a core Object called
 ## products
 to get the product(s) you need they are some usefull methods you can use:
 * selectById: you can simply specify the id of product you need to get information by this method.
-* category(category_id): you can simply specify the category that you are intrested of having its product, this method can be used for creating category pages.
+* category(category_id): you can simply specify the category that you are intrested in having its product, this method can be used for creating category pages.
 * store(store_id): this method can bring you all the producs a specific shop has into your website.
 * orderBy(order_by): this method can order the results by the field provided as order_by.
-* limitsBy(low,high): this method will limit your results by split and extract the portions you are really intrested of.
+* limitsBy(low,high): this method will limit your results by split and extract the portions you are really intrested in.
 
 except selectById, all other functions can bound to each other by using chain notation like `store.product.caregory(1).store(2).orderBy('price').limitsBy(15,25)`
 
