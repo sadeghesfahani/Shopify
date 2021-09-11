@@ -134,6 +134,7 @@ class Product(BaseMarketObjectManager):
         self.querySet['store_id'] = store_id
         return self
 
+
     def addNew(self, product_data):
         price = product_data.price
         if price:

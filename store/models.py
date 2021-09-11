@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.datetime_safe import date
 
+from account.models import Address
+
 User = get_user_model()
 
 
@@ -68,7 +70,7 @@ class Media(models.Model):
     picture = models.ImageField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
-    store = models.ForeignKey(Store,on_delete=models.CASCADE,blank=True,null=True)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, blank=True, null=True)
     MAIN = 1
     OTHER = 2
     INLINE = 3
@@ -86,3 +88,63 @@ class Price(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 
+class Attribute(models.Model):
+    name = models.CharField(max_length=120, null=False, blank=False)
+
+
+class Option(models.Model):
+    name = models.CharField(max_length=120, null=False, blank=False)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, blank=False, null=False)
+    NONE = 0
+    ABSOLUTE = 1
+    RELATIVE = 2
+    PERCENTIVE = 3
+    CHOICES = [
+        (NONE, 'no effect'),
+        (ABSOLUTE, 'absolute'),
+        (RELATIVE, 'relative'),
+        (PERCENTIVE, 'percentive'),
+    ]
+    type = models.IntegerField(choices=CHOICES, default=0)
+    price = models.IntegerField(default=0)
+
+
+class AttributeSet(models.Model):
+    options = models.ManyToManyField(Option)
+    price = models.IntegerField(null=False, blank=False)
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rank = models.IntegerField()
+
+
+class Card(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    WAITING_FOR_PAYMENT = 0
+    PENDING = 1
+    IN_PROCESS = 2
+    SENT = 3
+    DONE = 4
+    CHOICES = [
+        (WAITING_FOR_PAYMENT, 'Waiting to pay'),
+        (PENDING, 'Pending'),
+        (IN_PROCESS, 'In process'),
+        (SENT, 'Sent'),
+        (DONE, 'Done'),
+    ]
+    status = models.IntegerField(choices=CHOICES, default=0)
+    payment_info = models.CharField(max_length=160)
+    total_price = models.IntegerField()
+    discount = models.ForeignKey(Discount,on_delete=models.PROTECT)
+    address_to_send_good = models.ForeignKey(Address)
+    address_to_send_invoice = models.ForeignKey(Address)
+    receive_time = models.DateTimeField()
+
+
+class Order(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    options = models.ManyToManyField(Option)
+    attriubute_set = models.ForeignKey(AttributeSet)
