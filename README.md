@@ -43,3 +43,7 @@ all the API interfaces in store application are provided by a core Object called
 * store attribute will confide based on store_id
 * sortby will sort your search result base on what you put next to it
 * low and high will limits the search results for your pagination purpuse
+
+all these filters can work at the same time, to undestand the concept consider this:
+`https://websitename.com/product/find?category=2&store=3&sortby=-price&low=15&high=30`
+this will bring you the category that happens to have id 2, store happens to have id 3 and sore them out base on price and items 15 to 30
