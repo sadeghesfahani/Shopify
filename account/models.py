@@ -27,6 +27,7 @@ class CustomUserManager(BaseUserManager):
                           user_type=user_type,
                           )
         user.set_password(password)
+        user.username = user.email
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True

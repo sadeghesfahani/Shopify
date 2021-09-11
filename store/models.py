@@ -48,6 +48,8 @@ class Store(models.Model):
     description = models.CharField(max_length=600)
     admins = models.ManyToManyField(User)
 
+    def __str__(self):
+        return f"{self.name}"
 
 class Product(models.Model):
     name = models.CharField(max_length=200)

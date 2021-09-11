@@ -2,7 +2,8 @@ from copy import deepcopy
 
 from django.contrib.auth import get_user_model
 from account.models import User
-from store.models import Store as StoreModel, Product as ProductModel, Category as CategoryModel, Price as PriceModel
+from store.models import Store as StoreModel, Product as ProductModel, Category as CategoryModel, Price as PriceModel, \
+    Attribute as AttributeModel, Option as OptionModel
 
 
 class Market:
@@ -118,6 +119,7 @@ class Product(BaseMarketObjectManager):
 
     def __init__(self, request):
         self.priceObject = Price()
+        self.attribute = Attribute()
         super(Product, self).__init__(request)
 
     def filterByCategory(self, category_id, recursive=False):
@@ -137,7 +139,7 @@ class Product(BaseMarketObjectManager):
     def addNew(self, product_data):
         new_product = self.targetObject(**ProductDataStructure(self.request, **product_data).__dict__)
         new_product.save()
-        self.priceObject.addNew(product=new_product, price=price)
+        self.priceObject.addNew(product=new_product, price=new_product.price)
         return new_product
 
     def modify(self, product_id, product_data):
@@ -150,6 +152,29 @@ class Product(BaseMarketObjectManager):
         product_to_modify.save()
         return product_to_modify
 
+
+class Attribute:
+    targetObject = AttributeModel
+    def __init__(self):
+        self.option = Option()
+    def getProductAttributes(self, product_id):
+        return self.targetObject.objects.filter(product_id=product_id)
+
+    def getAttributeOptions(self, attribute_id):
+        return self.targetObject.objects.get(pk=attribute_id).option_set.all()
+
+    def addNewAttribute(self, attribute_data_structure):
+        return self.targetObject(**attribute_data_structure.__dict__)
+    # todo: complete this class
+
+class Option:
+    targetObject = OptionModel
+    def addNewOption(self):
+        pass
+    # todo: complete this class
+
+
+# todo: create datastructures
 
 class Price:
     targetObject = PriceModel
@@ -213,5 +238,4 @@ class ProductDataStructure:
             self.store = market.store.selectById(store)
         else:
             self.store = store
-        print(self.__dict__)
         self.price = price
