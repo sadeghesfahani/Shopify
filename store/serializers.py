@@ -9,10 +9,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    price = serializers.ReadOnlyField()
+
     class Meta:
         model = Product
         fields = '__all__'
-
 
 
 class StoreSerializer(serializers.ModelSerializer):

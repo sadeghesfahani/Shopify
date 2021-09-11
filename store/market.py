@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from django.contrib.auth import get_user_model
 from account.models import User
-from store.models import Store as StoreModel, Product as ProductModel, Category as CategoryModel
+from store.models import Store as StoreModel, Product as ProductModel, Category as CategoryModel, Price as PriceModel
 
 
 class Market:
@@ -116,6 +116,10 @@ class Store(BaseMarketObjectManager):
 class Product(BaseMarketObjectManager):
     targetObject = ProductModel
 
+    def __init__(self, request):
+        self.price = Price()
+        super(Product, self).__init__(request)
+
     def filterByCategory(self, category_id, recursive=False):
         if recursive:
             children = Market(self.request).category.getChildrenList(category_id)
@@ -131,15 +135,38 @@ class Product(BaseMarketObjectManager):
         return self
 
     def addNew(self, product_data):
+        price = product_data.price
+        if price:
+            del product_data.price
         new_product = self.targetObject(**ProductDataStructure(self.request, **product_data).__dict__)
         new_product.save()
+        self.price.addNew(product=new_product, price=price)
         return new_product
 
     def modify(self, product_id, product_data):
+        price = product_data.price
+        if price:
+            del product_data.price
         product_to_modify = self.selectById(product_id)
         product_to_modify.__dict__.update(**ProductDataStructure(self.request, **product_data).__dict__)
         product_to_modify.save()
+        if self.price.getLastPrice(product=product_to_modify) != price:
+            self.price.addNew(product=product_to_modify, price=price)
+
         return product_to_modify
+
+
+class Price:
+    targetObject = PriceModel
+
+    def addNew(self, product, price):
+        return self.targetObject(product, price)
+
+    def getLastPrice(self, product):
+        return self.targetObject.objects.filter(product=product).order_by('-date')[0]
+
+    def getPriceList(self, product):
+        return self.targetObject.objects.filter(product=product)
 
 
 class Category(BaseMarketObjectManager):
@@ -182,7 +209,7 @@ class ProductDataStructure:
     this data structure will always come into place to avoid and handle unexpected errors during transforming information
     """
 
-    def __init__(self, request, name, category, description, store):
+    def __init__(self, request, name, category, description, store, price=None):
         market = Market(request)
         self.name = name
         if isinstance(category, int) or isinstance(category, str):
@@ -195,3 +222,4 @@ class ProductDataStructure:
         else:
             self.store = store
         print(self.__dict__)
+        self.price = price

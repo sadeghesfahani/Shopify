@@ -56,6 +56,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def price(self):
+        if len(self.price_set.all().order_by('-date')) > 0:
+            return self.price_set.all().order_by('-date')[0]
+        else:
+            return 0
+
 
 class Media(models.Model):
     picture = models.ImageField()
