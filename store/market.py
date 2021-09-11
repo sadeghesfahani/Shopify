@@ -144,15 +144,16 @@ class Product(BaseMarketObjectManager):
         return new_product
 
     def modify(self, product_id, product_data):
-        price = product_data.price
+        print(product_data)
+        price = product_data["price"]
         if price:
-            del product_data.price
+            del product_data["price"]
         product_to_modify = self.selectById(product_id)
         product_to_modify.__dict__.update(**ProductDataStructure(self.request, **product_data).__dict__)
         product_to_modify.save()
         if self.price.getLastPrice(product=product_to_modify) != price:
-            self.price.addNew(product=product_to_modify, price=price)
-
+            new_price_object = self.price.addNew(product=product_to_modify, price=price)
+            new_price_object.save()
         return product_to_modify
 
 
@@ -160,10 +161,13 @@ class Price:
     targetObject = PriceModel
 
     def addNew(self, product, price):
-        return self.targetObject(product, price)
+        return self.targetObject(product=product, price=price)
 
     def getLastPrice(self, product):
-        return self.targetObject.objects.filter(product=product).order_by('-date')[0]
+        try:
+            return self.targetObject.objects.filter(product=product).order_by('-date')[0]
+        except IndexError:
+            return 0
 
     def getPriceList(self, product):
         return self.targetObject.objects.filter(product=product)

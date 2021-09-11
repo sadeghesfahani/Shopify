@@ -8,12 +8,21 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Price
+        fields = "__all__"
+
+
 class ProductSerializer(serializers.ModelSerializer):
-    price = serializers.ReadOnlyField()
+    price = PriceSerializer(many=False)
 
     class Meta:
         model = Product
         fields = '__all__'
+
+    # def price(self):
+    #     return PriceSerializer(self.price)
 
 
 class StoreSerializer(serializers.ModelSerializer):

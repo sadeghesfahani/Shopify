@@ -83,4 +83,6 @@ class Media(models.Model):
 class Price(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.IntegerField()
-    date = models.DateField()
+    date = models.DateTimeField(auto_now_add=True)
+
+
