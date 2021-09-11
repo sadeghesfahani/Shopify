@@ -101,17 +101,13 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
                 products.filterByCategory(request.GET['category'],True)
             else:
                 products.filterByCategory(request.GET['category'])
+        if 'orderby' in request.GET:
+            products.orderBy(request.GET['orderby'])
+        if 'low' in request.GET and 'high' in request.GET:
+            products.limitsBy(int(request.GET['low']),int(request.GET['high']))
+
         return Response(self.get_serializer_class()(products.fetch(),many = True).data)
-        # if 'store' in request.GET:
-        #     if 'category' in request.GET:
-        #         if 'recursive' in request.GET and request.GET['recursive']:
-        #             obj = self.get_queryset().filterByStore(request.GET['store']).filterByCategory(request.GET['category'], True)
-        #         else:
-        #             obj = self.get_queryset().filterByStore(request.GET['store']).filterByCategory(request.GET['category'], False)
-        #         return Response(self.get_serializer_class()(obj.fetch(),many=True).data)
-        #     return Response(self.get_serializer_class()(self.get_queryset().filterByCategory(pk).fetch(),many=True).data)
-        # else:
-        #     raise Http404
+
     def prepareData(self):
         market = Market(self.request)
         store = market.admin.getStore()
@@ -132,7 +128,6 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     def prepareList(self):
         serializer = self.get_serializer_class()
         queryset = self.get_queryset(many=True)
-        print(queryset)
         return serializer(queryset, many=True).data
 
     def createNewProduct(self):

@@ -29,8 +29,9 @@ class BaseMarketObjectManager:
 
     def __init__(self, request=None):
         self.querySet = dict()
-        self.orderBy = False
+        self.order_by = False
         self.limits = None
+        self.price = False
         self.request = request
 
     @classmethod
@@ -38,7 +39,7 @@ class BaseMarketObjectManager:
         return cls.targetObject.objects.get(id=identifier)
 
     def orderBy(self, order_by_string):
-        self.orderBy = order_by_string
+        self.order_by = order_by_string
         return self
 
     def limitsBy(self, lower_boundary_band, higher_boundary_band):
@@ -51,7 +52,7 @@ class BaseMarketObjectManager:
 
     def fetch(self):
         objects = self.getClass().targetObject.objects.filter(**self.querySet).order_by(
-            self.orderBy) if self.orderBy else self.getClass().targetObject.objects.filter(**self.querySet)
+            self.order_by) if self.order_by else self.getClass().targetObject.objects.filter(**self.querySet)
         return objects[self.limits[0]:self.limits[1]] if self.limits else objects
 
 
@@ -107,9 +108,8 @@ class Store(BaseMarketObjectManager):
     def getStore(self, store):
         return self.selectById(store) if isinstance(store, int) else store
 
-    @staticmethod
-    def getCurrentUser():
-        admin_model = Admin()
+    def getCurrentUser(self):
+        admin_model = Admin(self.request)
         return admin_model.currentUser()
 
 
@@ -117,7 +117,7 @@ class Product(BaseMarketObjectManager):
     targetObject = ProductModel
 
     def __init__(self, request):
-        self.price = Price()
+        self.priceObject = Price()
         super(Product, self).__init__(request)
 
     def filterByCategory(self, category_id, recursive=False):
@@ -134,27 +134,20 @@ class Product(BaseMarketObjectManager):
         self.querySet['store_id'] = store_id
         return self
 
-
     def addNew(self, product_data):
-        price = product_data.price
-        if price:
-            del product_data.price
         new_product = self.targetObject(**ProductDataStructure(self.request, **product_data).__dict__)
         new_product.save()
-        self.price.addNew(product=new_product, price=price)
+        self.priceObject.addNew(product=new_product, price=price)
         return new_product
 
     def modify(self, product_id, product_data):
-        print(product_data)
-        price = product_data["price"]
-        if price:
-            del product_data["price"]
         product_to_modify = self.selectById(product_id)
+        price = product_to_modify.price
         product_to_modify.__dict__.update(**ProductDataStructure(self.request, **product_data).__dict__)
-        product_to_modify.save()
-        if self.price.getLastPrice(product=product_to_modify) != price:
-            new_price_object = self.price.addNew(product=product_to_modify, price=price)
+        if product_to_modify.price != price:
+            new_price_object = self.priceObject.addNew(product=product_to_modify, price=price)
             new_price_object.save()
+        product_to_modify.save()
         return product_to_modify
 
 
@@ -163,12 +156,6 @@ class Price:
 
     def addNew(self, product, price):
         return self.targetObject(product=product, price=price)
-
-    def getLastPrice(self, product):
-        try:
-            return self.targetObject.objects.filter(product=product).order_by('-date')[0]
-        except IndexError:
-            return 0
 
     def getPriceList(self, product):
         return self.targetObject.objects.filter(product=product)
