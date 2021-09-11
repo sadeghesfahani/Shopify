@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.contrib.auth import get_user_model
 from account.models import User
 from store.models import Store as StoreModel, Product as ProductModel, Category as CategoryModel
@@ -9,6 +11,7 @@ class Market:
     models yet integrated business model, based on single responsibility principle and open-close principle, all classes
     build separately to have the least interaction with each other that may cause fragility during adding new features.
     """
+
     def __init__(self, request):
         self.product = Product(request)
         self.store = Store(request)
@@ -113,8 +116,14 @@ class Store(BaseMarketObjectManager):
 class Product(BaseMarketObjectManager):
     targetObject = ProductModel
 
-    def filterByCategory(self, category_id):
-        self.querySet["category_id"] = category_id
+    def filterByCategory(self, category_id, recursive=False):
+        if recursive:
+            children = Market(self.request).category.getChildrenList(category_id)
+            if children is None or children == []:
+                children = [category_id]
+            self.querySet['category_id__in'] = children
+        else:
+            self.querySet["category_id"] = category_id
         return self
 
     def filterByStore(self, store_id):
@@ -136,11 +145,24 @@ class Product(BaseMarketObjectManager):
 class Category(BaseMarketObjectManager):
     targetObject = CategoryModel
 
+    def getChildrenList(self, pk):
+        parent = self.selectById(pk)
+        children_list = list()
+        parent_list = [parent]
+        while self.targetObject.objects.filter(parent__in=parent_list).count() > 0:
+            parent_list_copy = deepcopy(parent_list)
+            parent_list = list()
+            for child in self.targetObject.objects.filter(parent__in=parent_list_copy):
+                children_list.append(child.id)
+                parent_list.append(child.id)
+        return children_list
+
 
 class StoreDataStructure:
     """
     this data structure will always come into place to avoid and handle unexpected errors during transforming information
     """
+
     def __init__(self, request, name, description, admins=None):
         self.name = name
         self.description = description
@@ -159,6 +181,7 @@ class ProductDataStructure:
     """
     this data structure will always come into place to avoid and handle unexpected errors during transforming information
     """
+
     def __init__(self, request, name, category, description, store):
         market = Market(request)
         self.name = name

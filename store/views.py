@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.urls import reverse
 from django.views.generic import TemplateView
 from rest_framework.decorators import action
@@ -73,40 +74,6 @@ class MenuApi(APIView):
 
 
 # ---------------------------------here----------------------------------------
-
-
-# class ProductAPI(viewsets.ViewSet,generics.GenericAPIView):
-#
-#     @staticmethod
-#     def list(request):
-#         queryset = Market(request).product.fetch()
-#         serialized = ProductSerializer(queryset, many=True)
-#         return Response(serialized.data)
-#
-#     @staticmethod
-#     def retrieve(request, pk=None):
-#         market = Market(request)
-#         return Response(ProductSerializer(market.product.selectById(pk)).data)
-#
-#     def create(self, request):
-#         market = Market(request)
-#         new_product = market.product.addNew(product_data=self.prepareData(market))
-#         serialized_new_product = ProductSerializer(new_product)
-#         return Response(serialized_new_product.data)
-#
-#     def update(self, request, pk=None):
-#         market = Market(request)
-#         modified_product = market.product.modify(pk, self.prepareData(market))
-#         serialized_modified_product = ProductSerializer(modified_product)
-#         return Response(serialized_modified_product.data)
-#
-#     def prepareData(self, market):
-#         store = market.admin.getStore()
-#         data = self.request.data
-#         data['store'] = store
-#         return data
-
-
 class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = ProductSerializer
     queryset = None
@@ -123,6 +90,28 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     def update(self, request, pk=None):
         return Response(self.modifyProduct(pk))
 
+    @action(detail=False)
+    def find(self, request, pk=None):
+        products = self.get_queryset()
+        if 'store' in request.GET:
+            products.filterByStore(request.GET['store'])
+        if 'category' in request.GET:
+            if 'recursive' in request.GET and request.GET['recursive']:
+
+                products.filterByCategory(request.GET['category'],True)
+            else:
+                products.filterByCategory(request.GET['category'])
+        return Response(self.get_serializer_class()(products.fetch(),many = True).data)
+        # if 'store' in request.GET:
+        #     if 'category' in request.GET:
+        #         if 'recursive' in request.GET and request.GET['recursive']:
+        #             obj = self.get_queryset().filterByStore(request.GET['store']).filterByCategory(request.GET['category'], True)
+        #         else:
+        #             obj = self.get_queryset().filterByStore(request.GET['store']).filterByCategory(request.GET['category'], False)
+        #         return Response(self.get_serializer_class()(obj.fetch(),many=True).data)
+        #     return Response(self.get_serializer_class()(self.get_queryset().filterByCategory(pk).fetch(),many=True).data)
+        # else:
+        #     raise Http404
     def prepareData(self):
         market = Market(self.request)
         store = market.admin.getStore()
@@ -151,7 +140,7 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
         serialized_new_product = self.get_serializer_class()(new_product)
         return serialized_new_product.data
 
-    def modifyProduct(self,pk):
+    def modifyProduct(self, pk):
         modified_product = self.get_queryset().modify(pk, self.prepareData())
         serialized_modified_product = self.get_serializer_class()(modified_product)
         return serialized_modified_product.data
