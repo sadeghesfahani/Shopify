@@ -38,7 +38,8 @@ all the API interfaces in store application are provided by a core Object called
 * `https://websitename.com/product/<int:product_id>` with POST method will modify product if you are entitled to do so
 * `https://websitename.com/product/find` this API will get attribiutes where can modify your search result:
 
-> category attribiute will confide your results based on the category id you have provided in your url
-> store attribute will confide based on store_id
-> sortby will sort your search result base on what you put next to it
-> low and high will limits the search results for your pagination purpuse
+### attributes
+* category attribiute will confide your results based on the category id you have provided in your url
+* store attribute will confide based on store_id
+* sortby will sort your search result base on what you put next to it
+* low and high will limits the search results for your pagination purpuse
