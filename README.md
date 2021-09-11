@@ -29,18 +29,15 @@ now it's time to run our React project, to do so jump into the front end directo
 
 
 # API
-all the API interfaces in store application are provided by a core Object called Store into store.py module. this module does the CRUD operations for you by simple and chainable methods. first you need to specify what you need by it's searching methods and when your specifications finished fetch them all.
+all the API interfaces in store application are provided by a core Object called Store into market.py module. this module does the CRUD operations for you by simple and chainable methods. first you need to specify what you need by it's searching methods and when your specifications finished fetch them all.
 
 ## products
-to get the product(s) you need they are some usefull methods you can use:
-* selectById: you can simply specify the id of product you need to get information by this method.
-* category(category_id): you can simply specify the category that you are intrested in having its product, this method can be used for creating category pages.
-* store(store_id): this method can bring you all the producs a specific shop has into your website.
-* orderBy(order_by): this method can order the results by the field provided as order_by.
-* limitsBy(low,high): this method will limit your results by split and extract the portions you are really intrested in.
-
-except selectById, all other functions can bound to each other by using chain notation like `store.product.caregory(1).store(2).orderBy('price').limitsBy(15,25)`
-
-and the final trick, to fetch the data you have provided by chain notation you need to use the `fetch()` method to execute the quertset. to put it simple you can get all the products you need like this:
-
-`products = store.product.caregory(1).store(2).orderBy('price').limitsBy(15,25).fetch()`
+`https://websitename.com/product` with GET method will give all the products exist in the market
+`https://websitename.com/product` with POST method will create new product
+`https://websitename.com/product/<int:product_id>` with GET method will give you the product information
+`https://websitename.com/product/<int:product_id>` with POST method will modify product if you are entitled to do so
+`https://websitename.com/product/find` this API will get attribiutes where can modify your search result:
+category attribiute will confide your results based on the category id you have provided in your url
+store attribute will confide based on store_id
+sortby will sort your search result base on what you put next to it
+low and high will limits the search results for your pagination purpuse
