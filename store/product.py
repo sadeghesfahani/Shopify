@@ -30,8 +30,11 @@ class Product(BaseMarketObjectManager):
         new_product = self.targetObject(**ProductDataStructure(self.request, **product_data).__dict__)
         new_product.save()
         self.priceObject.addNew(product=new_product, price=new_product.price)
-        if "data" in self.request:
-            self.handleAttributes(new_product.id)
+        try:
+            if "data" in self.request:
+                self.handleAttributes(new_product.id)
+        except TypeError:
+            pass
         return new_product
 
     def modify(self, product_id, product_data):

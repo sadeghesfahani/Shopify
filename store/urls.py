@@ -6,5 +6,5 @@ from .views import *
 router = routers.SimpleRouter()
 router.register(r'product', ProductAPI,basename='product')
 urlpatterns = [
-    path('', include(router.urls), name='product'),
+    path('', include(router.urls), name='products'),
 ]

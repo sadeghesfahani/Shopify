@@ -1,6 +1,7 @@
+from django.http import Http404
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, permissions
 
 from .market import Market
 from store.serializers import *
@@ -11,16 +12,29 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     queryset = None
 
     def list(self, request):
-        return Response(self.prepareList())
+        try:
+            return Response(self.prepareList())
+        except Product.DoesNotExist:
+            raise Http404
 
     def retrieve(self, request, pk=None):
-        return Response(self.get_object(pk))
+        try:
+            return Response(self.get_object(pk))
+        except Product.DoesNotExist:
+            raise Http404
 
     def create(self, request):
-        return Response(self.createNewProduct())
+
+        try:
+            return Response(self.createNewProduct())
+        except Product.DoesNotExist:
+            raise Http404
 
     def update(self, request, pk=None):
-        return Response(self.modifyProduct(pk))
+        try:
+            return Response(self.modifyProduct(pk))
+        except Product.DoesNotExist:
+            raise Http404
 
     @action(detail=False)
     def find(self, request, pk=None):
@@ -71,3 +85,8 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
         modified_product = self.get_queryset().modify(pk, self.prepareData())
         serialized_modified_product = self.get_serializer_class()(modified_product)
         return serialized_modified_product.data
+
+    def get_permissions(self):
+        if self.action == "create":
+            self.permission_classes = [permissions.IsAuthenticated]
+        return super(ProductAPI, self).get_permissions()
