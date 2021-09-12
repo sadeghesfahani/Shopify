@@ -51,6 +51,7 @@ class Store(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False, blank=False)
@@ -61,13 +62,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    # @property
-    # def price(self):
-    #     if len(self.price_set.all().order_by('-date')) > 0:
-    #         return self.price_set.all().order_by('-date')[0]
-    #     else:
-    #         return 0
-
+    @property
+    def attributes(self):
+        attributes_dict = dict()
+        attributes = Attribute.objects.filter(product_id=self.id)
+        # for attr in attributes:
+        #     attributes_dict[attr] = Option.objects.filter(attribute_id=attr.id)
+        return attributes
 
 class Media(models.Model):
     picture = models.ImageField()
@@ -86,7 +87,7 @@ class Media(models.Model):
 
 
 class Price(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE,related_name='price_product')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='price_product')
     price = models.IntegerField()
     date = models.DateTimeField(auto_now_add=True)
 
@@ -100,7 +101,10 @@ class Price(models.Model):
 
 class Attribute(models.Model):
     name = models.CharField(max_length=120, null=False, blank=False)
-
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    @property
+    def options(self):
+        return Option.objects.filter(attribute_id=self.id)
 
 class Option(models.Model):
     name = models.CharField(max_length=120, null=False, blank=False)

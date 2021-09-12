@@ -8,6 +8,19 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class OptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Option
+        fields= "__all__"
+
+class AttributeSerializer(serializers.ModelSerializer):
+    options = OptionSerializer(many=True)
+
+    class Meta:
+        model = Attribute
+        fields = "__all__"
+
+
 class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Price
@@ -15,7 +28,7 @@ class PriceSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
+    attributes = AttributeSerializer(many=True)
 
     class Meta:
         model = Product

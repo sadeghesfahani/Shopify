@@ -1,83 +1,54 @@
-from .models import *
-from django.shortcuts import get_object_or_404
+from .market_manager import BaseMarketObjectManager
+from .models import Store as StoreModel
+from .Users import Admin
 
 
-class StoreObj:
-    category_class = Category
-    product_class = Product
-    store_class = Store
+class Store(BaseMarketObjectManager):
+    targetObject = StoreModel
 
-    def __init__(self):
-        self.product = Product()
-        self.category = Category()
+    def currentStore(self):
+        return self.targetObject.objects.get(admins__in=self.request.user)
 
+    def addStoreDataStructure(self, **kwargs):
+        return StoreDataStructure(self.request, **kwargs)
 
-class Product:
+    def addStore(self, **kwargs):
+        return self.targetObject(**self.addStoreDataStructure(**kwargs).__dict__)
 
-    def __init__(self):
-        self.query_set = dict()
-        self.order_by = str()
-        self.limits = list()
+    def modifyStore(self, store_object_or_id, **kwargs):
+        if isinstance(store_object_or_id, int):
+            modifying_store = self.targetObject.objects.get(id=store_object_or_id)
+        else:
+            modifying_store = store_object_or_id
+        modifying_store.update(**self.addStoreDataStructure(**kwargs).__dict__)
 
-    @staticmethod
-    def selectById(product_id):
-        return StoreObj.product_class.objects.get(id=product_id)
+    def isAdminOfStore(self, store, user=None):
+        store_to_check = self.getStore(store)
+        user_to_check = self.getCurrentUser() if user is None else user
+        return True if user_to_check in store_to_check.admins else False
 
-    def category(self, category_id):
-        self.query_set['category_id'] = category_id
-        return self
+    def getStore(self, store):
+        return self.selectById(store) if isinstance(store, int) else store
 
-    def store(self, store_id):
-        self.query_set['store_id'] = store_id
-        return self
-
-    def orderBy(self, order_by):
-        self.order_by = order_by
-        return self
-
-    def limitsBy(self, low, high):
-        self.limits = [low, high]
-        return self
-
-    def fetch(self):
-        query_set = StoreObj.product_class.objects.filter(**self.query_set).order_by(
-            self.order_by) if self.order_by else StoreObj.product_class.objects.filter(**self.query_set)
-
-        return query_set[self.limits[0]:self.limits[1]] if self.limits else query_set
-
-    @staticmethod
-    def addProduct(product_data_structure):
-        return StoreObj.product_class(**product_data_structure.__dict__)
-
-    @staticmethod
-    def editProduct(product_data_structure, product_id):
-        return StoreObj.product_class.objects.get(pk=product_id).update(**product_data_structure.__dict__)
+    def getCurrentUser(self):
+        admin_model = Admin(self.request)
+        return admin_model.currentUser()
 
 
-class Category:
+class StoreDataStructure:
+    """
+    this data structure will always come into place to avoid and handle unexpected errors during transforming information
+    """
 
-    def addCategory(self, category_data_structure):
-        category = StoreObj.category_class(**category_data_structure.__dict__)
-        category.save()
-        return category
-
-    @staticmethod
-    def selectById(category_id):
-        return StoreObj.category_class.objects.get(pk=category_id)
-
-
-class ProductDataStructure:
-    def __init__(self, name, category, description, store):
+    def __init__(self, request, name, description, admins=None):
         self.name = name
-        self.category = category
         self.description = description
-        self.store = store
-
-
-class CategoryDataStructure:
-    store = StoreObj()
-
-    def __init__(self, name, parent=None, **kwargs):
-        self.name = name
-        self.parent = None if parent is None else CategoryDataStructure.store.category.selectById(parent)
-        # self.parent = CategoryDataStructure.store.category.selectById(parent)
+        if admins is None:
+            admin_object = Admin(request)
+            admin = admin_object.currentUser()
+            self.admins = [admin]
+        else:
+            if isinstance(admins, list):
+                self.admins = admins
+            else:
+                self.admins = [admins]

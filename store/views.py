@@ -1,79 +1,12 @@
-from django.http import Http404
-from django.urls import reverse
-from django.views.generic import TemplateView
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import mixins, generics, viewsets, permissions
-from rest_framework.views import APIView
+from rest_framework import generics, viewsets
 
 from .market import Market
-from .store import *
 from store.serializers import *
 
 
-class HomeView(TemplateView):
-    template_name = 'index.html'
-    store = StoreObj()
 
-    def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
-        context['data'] = self.store.product.category(1).fetch()
-        context['link'] = reverse("market-list")
-        return context
-
-
-class ProductApi(APIView):
-    store = StoreObj()
-
-    def get(self, request, *args, **kwargs):
-        query_set = self.store.product.category(category_id=kwargs)
-        serialized = ProductSerializer(query_set, many=True)
-        return Response(serialized.data)
-
-
-class CategoryApi(APIView):
-    store = StoreObj()
-
-    def get(self, request, *args, **kwargs):
-        if 'category_id' in kwargs:
-            query_set = self.store.product.category(kwargs['category_id']).fetch()
-            serialized = ProductSerializer(query_set, many=True)
-        else:
-            query_set = self.store.category_class.objects.all()
-            serialized = CategorySerializer(query_set, many=True)
-        return Response(serialized.data)
-
-    def post(self, request, *args, **kwargs):
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            category = self.store.category.addCategory(CategoryDataStructure(**serializer.data))
-            serializer = CategorySerializer(category)
-            return Response(serializer.data)
-
-
-class StoreApi(APIView):
-    store = StoreObj()
-
-    def get(self, request, *args, **kwargs):
-        if 'store_id' in kwargs:
-            query_set = self.store.product.store(kwargs['store_id']).fetch()
-            serialized = ProductSerializer(query_set, many=True)
-        else:
-            query_set = self.store.store_class.objects.all()
-            serialized = CategorySerializer(query_set, many=True)
-        return Response(serialized.data)
-
-
-class MenuApi(APIView):
-    store = StoreObj()
-
-    def get(self, request, *args, **kwargs):
-        query_set = self.store.category_class.objects.all()
-        serialized = MenuSerializer(query_set, many=True)
-        return Response(serialized.data)
-
-
-# ---------------------------------here----------------------------------------
 class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = ProductSerializer
     queryset = None
@@ -98,15 +31,15 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
         if 'category' in request.GET:
             if 'recursive' in request.GET and request.GET['recursive']:
 
-                products.filterByCategory(request.GET['category'],True)
+                products.filterByCategory(request.GET['category'], True)
             else:
                 products.filterByCategory(request.GET['category'])
         if 'orderby' in request.GET:
             products.orderBy(request.GET['orderby'])
         if 'low' in request.GET and 'high' in request.GET:
-            products.limitsBy(int(request.GET['low']),int(request.GET['high']))
+            products.limitsBy(int(request.GET['low']), int(request.GET['high']))
 
-        return Response(self.get_serializer_class()(products.fetch(),many = True).data)
+        return Response(self.get_serializer_class()(products.fetch(), many=True).data)
 
     def prepareData(self):
         market = Market(self.request)
