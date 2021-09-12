@@ -13,7 +13,14 @@ class Store(BaseMarketObjectManager):
         return StoreDataStructure(self.request, **kwargs)
 
     def addStore(self, **kwargs):
-        return self.targetObject(**self.addStoreDataStructure(**kwargs).__dict__)
+        store_data_structure = self.addStoreDataStructure(**kwargs).__dict__
+        admins = store_data_structure['admins']
+        del store_data_structure['admins']
+        new_store = self.targetObject(**store_data_structure)
+        new_store.save()
+        new_store.admins.set(admins)
+        new_store.save()
+        return new_store
 
     def modifyStore(self, store_object_or_id, **kwargs):
         if isinstance(store_object_or_id, int):

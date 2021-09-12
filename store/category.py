@@ -17,3 +17,19 @@ class Category(BaseMarketObjectManager):
                 children_list.append(child.id)
                 parent_list.append(child.id)
         return children_list
+
+    def addNew(self,category_data):
+        new_category = self.targetObject(**CategoryDataStructure(**category_data).__dict__)
+        new_category.save()
+        return new_category
+
+
+class CategoryDataStructure:
+    def __init__(self, name, parent=None):
+        self.name = name
+        if isinstance(parent, int) or isinstance(parent, str):
+            self.parent = Category().selectById(parent)
+        elif parent is None:
+            self.parent = None
+        else:
+            self.parent = parent

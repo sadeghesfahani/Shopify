@@ -1,3 +1,6 @@
+from django.http import Http404
+
+
 class BaseMarketObjectManager:
     """
     this class provides the basic functionality will repetitively be using in Market subclasses
@@ -29,6 +32,9 @@ class BaseMarketObjectManager:
         return cls
 
     def fetch(self):
-        objects = self.getClass().targetObject.objects.filter(**self.querySet).order_by(
-            self.order_by) if self.order_by else self.getClass().targetObject.objects.filter(**self.querySet)
+        try:
+            objects = self.getClass().targetObject.objects.filter(**self.querySet).order_by(
+                self.order_by) if self.order_by else self.getClass().targetObject.objects.filter(**self.querySet)
+        except self.getClass().targetObject.DoesNotExist:
+            raise Http404
         return objects[self.limits[0]:self.limits[1]] if self.limits else objects
