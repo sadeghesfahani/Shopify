@@ -6,7 +6,6 @@ from .market import Market
 from store.serializers import *
 
 
-
 class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = ProductSerializer
     queryset = None
