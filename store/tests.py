@@ -66,6 +66,45 @@ class TestUrl(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['name'], self.product.selectById(response.data['id']).name)
 
+        json_data = json.dumps(
+            {"name": "something",
+             "description": "something",
+             "category": new_category.id,
+             "price": 50000,
+             "attributes": [
+                 {
+                     "options": [
+                         {
+                             "name": "3.2 Mhzzz",
+                             "type": 0,
+                             "price": 0,
+                         },
+                         {
+                             "name": "ajabz",
+                             "type": 0,
+                             "price": 0,
+                         }
+                     ],
+                     "name": "CPU",
+                 },
+                 {
+                     "options": [
+                         {
+                             "name": "16inc",
+                             "type": 0,
+                             "price": 0
+                         }
+                     ],
+                     "name": "صفحه نمایش"
+                 }
+             ]})
+        response = self.client.post(reverse('product-list'), json_data, content_type='application/json',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.data['attributes'][0]['name'],"CPU")
+        self.assertEqual(response.data['attributes'][1]['name'],"صفحه نمایش")
+        self.assertEqual(response.data['attributes'][0]['options'][1]['name'],"ajabz")
+
+
     def testModifyAPIURL(self):
         new_category = self.category.addNew({'name': "first_category", "parent": None})
         new_admin = BaseUserModel.register(

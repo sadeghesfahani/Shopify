@@ -31,9 +31,10 @@ class Product(BaseMarketObjectManager):
         new_product.save()
         self.priceObject.addNew(product=new_product, price=new_product.price)
         try:
-            if "data" in self.request:
-                self.handleAttributes(new_product.id)
+            self.handleAttributes(new_product.id)
         except TypeError:
+            pass
+        except AttributeError:
             pass
         return new_product
 
