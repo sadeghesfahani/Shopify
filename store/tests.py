@@ -132,3 +132,82 @@ class TestUrl(TestCase):
         self.assertEqual(response.data['name'], "somethingelse")
         self.assertEqual(response.data['description'], "somethingelse")
         self.assertEqual(response.data['price'], 10000)
+
+        json_data = json.dumps(
+            {"name": "something",
+             "description": "something",
+             "category": new_category.id,
+             "price": 50000,
+             "attributes": [
+                 {
+                     "options": [
+                         {
+                             "name": "3.2 Mhzzz",
+                             "type": 0,
+                             "price": 0,
+                         },
+                         {
+                             "name": "ajabz",
+                             "type": 0,
+                             "price": 0,
+                         }
+                     ],
+                     "name": "CPU",
+                 },
+                 {
+                     "options": [
+                         {
+                             "name": "16inc",
+                             "type": 0,
+                             "price": 0
+                         }
+                     ],
+                     "name": "صفحه نمایش"
+                 }
+             ]})
+        response = self.client.post(reverse('product-list'), json_data, content_type='application/json',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        product_id = response.data['id']
+
+        json_data = json.dumps(
+            {"name": "somethingelse",
+             "description": "somethingelse",
+             "category": new_category.id,
+             "price": 60000,
+             "attributes": [
+                 {
+                     "options": [
+                         {
+                             "name": "changed",
+                             "type": 1,
+                             "price": 10,
+                         },
+                         {
+                             "name": "yes it changed",
+                             "type": 1,
+                             "price": 10,
+                         }
+                     ],
+                     "name": "CPU-changed",
+                 },
+                 {
+                     "options": [
+                         {
+                             "name": "16inc-changed",
+                             "type": 1,
+                             "price": 5
+                         }
+                     ],
+                     "name": "changgggg"
+                 }
+             ]})
+        response = self.client.put(reverse('product-detail', args=(product_id,)), json_data,
+                                   content_type='application/json',
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        print(response.data['attributes'][0]['name'])
+        print(response.data['attributes'][1]['name'])
+        print(response.data['attributes'][0]['options'][1]['name'])
+        self.assertEqual(response.data['attributes'][0]['name'], "CPU-changed")
+        self.assertEqual(response.data['attributes'][1]['name'], "changgggg")
+        self.assertEqual(response.data['attributes'][0]['options'][1]['name'], "yes it changed")
