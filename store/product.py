@@ -1,3 +1,5 @@
+from rest_framework.exceptions import PermissionDenied
+from .errors import handleError
 from .market_manager import BaseMarketObjectManager
 from .models import Product as ProductModel, Attribute as AttributeModel, Option as OptionModel, Price as PriceModel
 from .store import Store
@@ -26,16 +28,13 @@ class Product(BaseMarketObjectManager):
         self.querySet['store_id'] = store_id
         return self
 
+    @handleError(targetObject)
     def addNew(self, product_data):
         new_product = self.targetObject(**ProductDataStructure(self.request, **product_data).__dict__)
         new_product.save()
         self.priceObject.addNew(product=new_product, price=new_product.price)
-        try:
-            self.handleAttributes(new_product.id)
-        except TypeError:
-            pass
-        except AttributeError:
-            pass
+        self.handleAttributes(new_product.id)
+
         return new_product
 
     def modify(self, product_id, product_data):
@@ -50,39 +49,57 @@ class Product(BaseMarketObjectManager):
         product_to_modify = self.selectById(product_id)
         return product_to_modify
 
+    @handleError(targetObject)
     def handleAttributes(self, product_id):
-        existing_attribute_ids = list()
-        existing_option_ids = list()
-        if 'attributes' in self.request.data:
-            for attr in self.request.data['attributes']:
-                if 'product' not in attr:
-                    attr['product'] = product_id
-                if 'id' in attr:
-                    Attribute().modifyAttribute(attribute_data_structure=AttributeDataStructure(**attr),
-                                                attribute_id=attr['id'])
+        (existing_attribute_ids, existing_option_ids) = (list(), list())
 
-                else:
-                    new_made_attribute = Attribute().addNewAttribute(product_id=product_id,
-                                                                     attribute_data_structure=(
-                                                                         AttributeDataStructure(**attr)))
-                    attr['id'] = new_made_attribute.id
-                    attr['attribute'] = new_made_attribute.id
-                existing_attribute_ids.append(attr['id'])
-                if 'options' in attr:
-                    for opt in attr["options"]:
-                        opt['attribute'] = attr['attribute']
-                        if 'id' in opt:
-                            Option().modifyOption(option_id=opt['id'],
-                                                  option_data_structure=OptionDataStructure(**opt))
-                        else:
-                            opt['attribute'] = attr["id"]
-                            new_made_option = Option().addNewOption(attribute_id=attr["id"],
-                                                                    option_data_structure=OptionDataStructure(**opt))
-                            opt['id'] = new_made_option.id
-                        existing_option_ids.append(opt['id'])
+        if 'attributes' in self.request.data:
+
+            for attr in self.request.data['attributes']:
+                self.handleEachAttribute(attr, product_id, existing_attribute_ids, existing_option_ids)
+
             self.deleteResidualAttributesAndOptions(attribute_id_list=existing_attribute_ids,
                                                     option_id_list=existing_option_ids,
                                                     product_id=product_id)
+
+    def handleEachAttribute(self, attr, product_id, existing_attribute_ids, existing_option_ids):
+        if 'product' not in attr:
+            attr['product'] = product_id
+        if 'id' in attr:
+            if self.isProductTheSame(product_id, attr['id']):
+                Attribute().modifyAttribute(attribute_data_structure=AttributeDataStructure(**attr),
+                                            attribute_id=attr['id'])
+            else:
+                raise PermissionDenied("product id your attribute is mentioning is belong to another products")
+        else:
+            new_made_attribute = Attribute().addNewAttribute(product_id=product_id,
+                                                             attribute_data_structure=(
+                                                                 AttributeDataStructure(**attr)))
+            (attr['id'], attr['attribute']) = (new_made_attribute.id, new_made_attribute.id)
+
+        existing_attribute_ids.append(attr['id'])
+        self.handleOptions(attr, existing_option_ids)
+
+    @staticmethod
+    @handleError(OptionModel)
+    def handleOptions(attr, existing_option_ids):
+        if 'options' in attr:
+            for opt in attr["options"]:
+                opt['attribute'] = attr['id']
+                if 'id' in opt:
+                    Option().modifyOption(option_id=opt['id'],
+                                          option_data_structure=OptionDataStructure(**opt))
+                else:
+                    opt['attribute'] = attr["id"]
+                    new_made_option = Option().addNewOption(attribute_id=attr["id"],
+                                                            option_data_structure=OptionDataStructure(**opt))
+                    opt['id'] = new_made_option.id
+                existing_option_ids.append(opt['id'])
+
+    @staticmethod
+    @handleError(AttributeModel)
+    def isProductTheSame(product_id, attribute_id):
+        return True if Attribute().getAttributeById(attribute_id).product_id == product_id else False
 
     @staticmethod
     def deleteResidualAttributesAndOptions(attribute_id_list, option_id_list, product_id):

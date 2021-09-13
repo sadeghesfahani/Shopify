@@ -12,29 +12,16 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     queryset = None
 
     def list(self, request):
-        try:
-            return Response(self.prepareList())
-        except Product.DoesNotExist:
-            raise Http404
+        return Response(self.prepareList())
 
     def retrieve(self, request, pk=None):
-        try:
-            return Response(self.get_object(pk))
-        except Product.DoesNotExist:
-            raise Http404
+        return Response(self.get_object(pk))
 
     def create(self, request):
-
-        try:
-            return Response(self.createNewProduct())
-        except Product.DoesNotExist:
-            raise Http404
+        return Response(self.createNewProduct())
 
     def update(self, request, pk=None):
-        try:
-            return Response(self.modifyProduct(pk))
-        except Product.DoesNotExist:
-            raise Http404
+        return Response(self.modifyProduct(pk))
 
     @action(detail=False)
     def find(self, request, pk=None):

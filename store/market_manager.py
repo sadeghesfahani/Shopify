@@ -1,4 +1,4 @@
-from django.http import Http404
+from store.errors import handleError
 
 
 class BaseMarketObjectManager:
@@ -17,7 +17,11 @@ class BaseMarketObjectManager:
 
     @classmethod
     def selectById(cls, identifier):
-        return cls.targetObject.objects.get(id=identifier)
+        @handleError(cls.targetObject)
+        def wrapper():
+            return cls.targetObject.objects.get(id=identifier)
+
+        return wrapper()
 
     def orderBy(self, order_by_string):
         self.order_by = order_by_string
@@ -32,9 +36,10 @@ class BaseMarketObjectManager:
         return cls
 
     def fetch(self):
-        try:
+        @handleError(self.targetObject)
+        def wrapper():
             objects = self.getClass().targetObject.objects.filter(**self.querySet).order_by(
                 self.order_by) if self.order_by else self.getClass().targetObject.objects.filter(**self.querySet)
-        except self.getClass().targetObject.DoesNotExist:
-            raise Http404
-        return objects[self.limits[0]:self.limits[1]] if self.limits else objects
+            return objects[self.limits[0]:self.limits[1]] if self.limits else objects
+
+        return wrapper()
