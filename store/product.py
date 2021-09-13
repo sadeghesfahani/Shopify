@@ -80,15 +80,18 @@ class Product(BaseMarketObjectManager):
         existing_attribute_ids.append(attr['id'])
         self.handleOptions(attr, existing_option_ids)
 
-    @staticmethod
     @handleError(OptionModel)
-    def handleOptions(attr, existing_option_ids):
+    def handleOptions(self, attr, existing_option_ids):
         if 'options' in attr:
             for opt in attr["options"]:
                 opt['attribute'] = attr['id']
                 if 'id' in opt:
-                    Option().modifyOption(option_id=opt['id'],
-                                          option_data_structure=OptionDataStructure(**opt))
+                    if self.isAttributeTheSame(attr['id'], opt['id']):
+                        Option().modifyOption(option_id=opt['id'],
+                                              option_data_structure=OptionDataStructure(**opt))
+                    else:
+                        raise PermissionDenied(
+                            'your option is mentioning to an option does not belong to this attribute')
                 else:
                     opt['attribute'] = attr["id"]
                     new_made_option = Option().addNewOption(attribute_id=attr["id"],
@@ -100,6 +103,11 @@ class Product(BaseMarketObjectManager):
     @handleError(AttributeModel)
     def isProductTheSame(product_id, attribute_id):
         return True if Attribute().getAttributeById(attribute_id).product_id == product_id else False
+
+    @staticmethod
+    @handleError(OptionModel)
+    def isAttributeTheSame(attribute_id, option_id):
+        return True if Option().selectById(option_id).attribute_id == attribute_id else False
 
     @staticmethod
     def deleteResidualAttributesAndOptions(attribute_id_list, option_id_list, product_id):
@@ -160,6 +168,9 @@ class Option:
 
     def removeOptionById(self, option_id):
         self.targetObject.objects.get(pk=option_id).delete()
+
+    def selectById(self, option_id):
+        return self.targetObject.objects.get(pk=option_id)
 
 
 class Price:
