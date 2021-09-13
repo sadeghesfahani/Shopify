@@ -65,3 +65,31 @@ class TestUrl(TestCase):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['name'], self.product.selectById(response.data['id']).name)
+
+    def testModifyAPIURL(self):
+        new_category = self.category.addNew({'name': "first_category", "parent": None})
+        new_admin = BaseUserModel.register(
+            UserDataStructure(first_name="admin", last_name="admin", email="admin@gmail.com",
+                              password="jshkfjsjhfgshjgfjh"))
+        new_store = self.store.addStore(name="store1", description="something", admins=new_admin)
+
+        json_data = json.dumps(
+            {"name": "something", "description": "something", "category": new_category.id,
+             "price": 50000})
+        self.client.login(username="admin@gmail.com", password="jshkfjsjhfgshjgfjh")
+        response = self.client.post(reverse('product-list'), json_data, content_type='application/json',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        product_id = response.data['id']
+        response = self.client.get(reverse('product-detail', args=(product_id,)))
+        self.assertEqual(response.data['name'], "something")
+        json_data = json.dumps(
+            {"name": "somethingelse", "description": "somethingelse", "category": new_category.id,
+             "price": 10000})
+
+        response = self.client.put(reverse('product-detail', args=(product_id,)), json_data,
+                                   content_type='application/json',
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.data['name'], "somethingelse")
+        self.assertEqual(response.data['description'], "somethingelse")
+        self.assertEqual(response.data['price'], 10000)

@@ -148,7 +148,9 @@ class Price:
     targetObject = PriceModel
 
     def addNew(self, product, price):
-        return self.targetObject(product=product, price=price).save()
+        new_price = self.targetObject(product=product, price=price)
+        new_price.save()
+        return new_price
 
     def getPriceList(self, product):
         return self.targetObject.objects.filter(product=product)
