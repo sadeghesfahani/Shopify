@@ -28,7 +28,6 @@ class Product(BaseMarketObjectManager):
         self.querySet['store_id'] = store_id
         return self
 
-    @handleError(targetObject)
     def addNew(self, product_data):
         new_product = self.targetObject(**ProductDataStructure(self.request, **product_data).__dict__)
         new_product.save()
@@ -37,6 +36,7 @@ class Product(BaseMarketObjectManager):
 
         return new_product
 
+    @handleError(targetObject)
     def modify(self, product_id, product_data):
         product_to_modify = self.selectById(product_id)
         price = product_to_modify.price
@@ -80,7 +80,6 @@ class Product(BaseMarketObjectManager):
         existing_attribute_ids.append(attr['id'])
         self.handleOptions(attr, existing_option_ids)
 
-    @handleError(OptionModel)
     def handleOptions(self, attr, existing_option_ids):
         if 'options' in attr:
             for opt in attr["options"]:
@@ -100,12 +99,10 @@ class Product(BaseMarketObjectManager):
                 existing_option_ids.append(opt['id'])
 
     @staticmethod
-    @handleError(AttributeModel)
     def isProductTheSame(product_id, attribute_id):
         return True if Attribute().getAttributeById(attribute_id).product_id == product_id else False
 
     @staticmethod
-    @handleError(OptionModel)
     def isAttributeTheSame(attribute_id, option_id):
         return True if Option().selectById(option_id).attribute_id == attribute_id else False
 
@@ -131,6 +128,7 @@ class Attribute:
     def getProductAttributes(self, product_id):
         return self.targetObject.objects.filter(product_id=product_id)
 
+    @handleError(targetObject)
     def getAttributeOptions(self, attribute_id):
         return self.targetObject.objects.get(pk=attribute_id).option_set.all()
 
@@ -139,15 +137,18 @@ class Attribute:
         new_made_attribute.save()
         return new_made_attribute
 
+    @handleError(targetObject)
     def modifyAttribute(self, attribute_data_structure, attribute_id):
         attribute_to_modify = self.targetObject.objects.get(pk=attribute_id)
         attribute_to_modify.__dict__.update(**attribute_data_structure.__dict__)
         attribute_to_modify.save()
         return attribute_to_modify
 
+    @handleError(targetObject)
     def getAttributeById(self, attribute_id):
         return self.targetObject.objects.get(pk=attribute_id)
 
+    @handleError(targetObject)
     def removeAttributeById(self, attribute_id):
         self.targetObject.objects.get(pk=attribute_id).delete()
 
@@ -160,15 +161,18 @@ class Option:
         new_made_option.save()
         return new_made_option
 
+    @handleError(targetObject)
     def modifyOption(self, option_id, option_data_structure):
         option_to_modify = self.targetObject.objects.get(pk=option_id)
         option_to_modify.__dict__.update(**option_data_structure.__dict__)
         option_to_modify.save()
         return option_to_modify
 
+    @handleError(targetObject)
     def removeOptionById(self, option_id):
         self.targetObject.objects.get(pk=option_id).delete()
 
+    @handleError(targetObject)
     def selectById(self, option_id):
         return self.targetObject.objects.get(pk=option_id)
 
