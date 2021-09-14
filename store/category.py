@@ -53,7 +53,7 @@ class Category(BaseMarketObjectManager):
 
 
 class CategoryDataStructure:
-    def __init__(self, name, parent=None, shown_in_menu_bar=True, *args, **kwargs):
+    def __init__(self, name, shown_in_menu_bar=None, parent=None, *args, **kwargs):
         self.name = name
         if isinstance(parent, int) or isinstance(parent, str):
             self.parent = Category().selectById(parent)
@@ -61,4 +61,5 @@ class CategoryDataStructure:
             self.parent = None
         else:
             self.parent = parent
-        self.shown_in_menu_bar = shown_in_menu_bar
+        if shown_in_menu_bar is not None:
+            self.shown_in_menu_bar = shown_in_menu_bar

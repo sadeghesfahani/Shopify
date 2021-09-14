@@ -247,3 +247,34 @@ class TestUrl(TestCase):
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(response.status_code, 404)
+
+    def testCreateCategoryURL(self):
+        json_data = json.dumps({'name': "root1"})
+        response = self.client.post(reverse('category-list'), json_data, content_type='application/json',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.data['name'], 'root1')
+        json_data = json.dumps({'name': "root2"})
+        response = self.client.post(reverse('category-list'), json_data, content_type='application/json',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.data['name'], 'root2')
+        json_data = json.dumps({'name': "child1 of root1", "parent": 1})
+        response = self.client.post(reverse('category-list'), json_data, content_type='application/json',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        category = Category()
+        parent_id = category.selectById(response.data['id']).parent.id
+        self.assertEqual(response.data['parent'], parent_id)
+
+        self.assertEqual(category.getChildren(parent_id)[0].id, response.data['id'])
+        self.assertEqual(response.data['name'], 'child1 of root1')
+
+    def testModifyCategoryURL(self):
+        json_data = json.dumps({'name': "root1"})
+        response = self.client.post(reverse('category-list'), json_data, content_type='application/json',
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        categpry_id = response.data['id']
+        json_data = json.dumps({'name': "root1-modified", 'shown_in_menu_bar': False})
+        response = self.client.put(reverse('category-detail', args=(categpry_id,)), json_data,
+                                   content_type='application/json',
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.data['shown_in_menu_bar'], False)
+        self.assertEqual(response.data['name'], "root1-modified")
