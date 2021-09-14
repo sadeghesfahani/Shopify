@@ -4,16 +4,16 @@ from .models import *
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'parent','shown_in_menu_bar']
 
 
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
-        fields= "__all__"
+        fields = "__all__"
+
 
 class AttributeSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True)

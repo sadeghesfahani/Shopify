@@ -1,7 +1,6 @@
 from .errors import handleError
 from .market_manager import BaseMarketObjectManager
 from .models import Category as CategoryModel
-from copy import deepcopy
 
 
 class Category(BaseMarketObjectManager):
@@ -38,26 +37,23 @@ class Category(BaseMarketObjectManager):
     @handleError(targetObject)
     def getRoots(self):
         return self.targetObject.objects.root_nodes()
-    # def getChildrenList(self, pk):
-    #     parent = self.selectById(pk)
-    #     children_list = list()
-    #     parent_list = [parent]
-    #     while self.targetObject.objects.filter(parent__in=parent_list).count() > 0:
-    #         parent_list_copy = deepcopy(parent_list)
-    #         parent_list = list()
-    #         for child in self.targetObject.objects.filter(parent__in=parent_list_copy):
-    #             children_list.append(child.id)
-    #             parent_list.append(child.id)
-    #     return children_list
-    #
-    # def addNew(self,category_data):
-    #     new_category = self.targetObject(**CategoryDataStructure(**category_data).__dict__)
-    #     new_category.save()
-    #     return new_category
+
+    @handleError(targetObject)
+    def addNew(self, category_data):
+        new_category = self.targetObject(**CategoryDataStructure(**category_data).__dict__)
+        new_category.save()
+        return new_category
+
+    @handleError(targetObject)
+    def modifyCategory(self, category_id, category_data):
+        category_to_modify = self.selectById(category_id)
+        category_to_modify.__dict__.update(**CategoryDataStructure(**category_data).__dict__)
+        category_to_modify.save()
+        return category_to_modify
 
 
 class CategoryDataStructure:
-    def __init__(self, name, parent=None):
+    def __init__(self, name, parent=None, shown_in_menu_bar=True, *args, **kwargs):
         self.name = name
         if isinstance(parent, int) or isinstance(parent, str):
             self.parent = Category().selectById(parent)
@@ -65,3 +61,4 @@ class CategoryDataStructure:
             self.parent = None
         else:
             self.parent = parent
+        self.shown_in_menu_bar = shown_in_menu_bar

@@ -14,12 +14,35 @@ class CategoryAPI(viewsets.ViewSet, generics.GenericAPIView):
     def list(self, request):
         return Response(self.prepareList())
 
+    def create(self, request):
+        return Response(self.createNewCategory())
+
+    def retrieve(self, request, pk=None):
+        return Response(self.get_object(pk))
+
+    def update(self, request, pk=None):
+        return Response(self.modifyCategory(pk))
+
+    def createNewCategory(self):
+        market = Market(self.request)
+        new_made_category = market.category.addNew(self.request.data)
+        return self.serializer_class(new_made_category, many=False).data
+
     def prepareList(self):
         market = Market(self.request)
         print(market.category.getChildren(1))
-        serialized_data = self.serializer_class(market.category.getChildren(1), many=True)
+        serialized_data = self.serializer_class(market.category.fetch(), many=True)
         return serialized_data.data
 
+    def get_object(self, pk=None):
+        market = Market(self.request)
+        category_selected = market.category.selectById(pk)
+        return self.serializer_class(category_selected, many=False).data
+
+    def modifyCategory(self, pk=None):
+        market = Market(self.request)
+        modified_category = market.category.modifyCategory(category_id=pk, category_data=self.request.data)
+        return self.serializer_class(modified_category,many=False).data
 
 class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = ProductSerializer
