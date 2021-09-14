@@ -1,15 +1,29 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.datetime_safe import date
+from mptt.models import MPTTModel, TreeForeignKey
 
 from account.models import Address
 
 User = get_user_model()
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=60, blank=False, null=False)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+# class Category(models.Model):
+#     name = models.CharField(max_length=60, blank=False, null=False)
+#     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+class Category(MPTTModel):
+    name = models.CharField(max_length=160, blank=False, null=False)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    shown_in_menu_bar = models.BooleanField(default=True)
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
+
+    def __str__(self):
+        if self.get_ancestors().count() > 0:
+            return f"{' - '.join([parent.name for parent in self.get_ancestors()])}-{self.name}"
+        else:
+            return f"{self.name}"
 
 
 class Discount(models.Model):
@@ -70,6 +84,7 @@ class Product(models.Model):
         #     attributes_dict[attr] = Option.objects.filter(attribute_id=attr.id)
         return attributes
 
+
 class Media(models.Model):
     picture = models.ImageField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
@@ -101,10 +116,12 @@ class Price(models.Model):
 
 class Attribute(models.Model):
     name = models.CharField(max_length=120, null=False, blank=False)
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
     @property
     def options(self):
         return Option.objects.filter(attribute_id=self.id)
+
 
 class Option(models.Model):
     name = models.CharField(max_length=120, null=False, blank=False)

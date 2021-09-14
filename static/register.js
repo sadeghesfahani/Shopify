@@ -35,8 +35,8 @@ function prepareLoginOption() {
         headers: prepareLoginHeaders(),
     }
     return option
-
 }
+
 
 function prepareLoginData() {
     const data = JSON.stringify({

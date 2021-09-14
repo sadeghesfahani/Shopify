@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'store',
     'rest_framework',
     'corsheaders',
+    'mptt',
 
 ]
 

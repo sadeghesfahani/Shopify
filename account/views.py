@@ -26,7 +26,7 @@ class AjaxMixin(FormView):
 
 class AuthenticationView(AjaxMixin, FormView):
     form_class = RegisterForm
-
+    template_name = 'index.html'
     def form_valid(self, form):
         try:
             self.authenticateUser(form)

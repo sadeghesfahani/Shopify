@@ -7,6 +7,20 @@ from .market import Market
 from store.serializers import *
 
 
+class CategoryAPI(viewsets.ViewSet, generics.GenericAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category
+
+    def list(self, request):
+        return Response(self.prepareList())
+
+    def prepareList(self):
+        market = Market(self.request)
+        print(market.category.getChildren(1))
+        serialized_data = self.serializer_class(market.category.getChildren(1), many=True)
+        return serialized_data.data
+
+
 class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = ProductSerializer
     queryset = None
