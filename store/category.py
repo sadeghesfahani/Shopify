@@ -40,14 +40,18 @@ class Category(BaseMarketObjectManager):
 
     @handleError(targetObject)
     def addNew(self, category_data):
-        new_category = self.targetObject(**CategoryDataStructure(**category_data).__dict__)
-        new_category.save()
+        category_data_structure = CategoryDataStructure(**category_data)
+        new_category = self.targetObject(**category_data_structure.__dict__)
+        new_category.insert_at(category_data_structure.parent, position='first-child', save=True)
         return new_category
 
     @handleError(targetObject)
     def modifyCategory(self, category_id, category_data):
         category_to_modify = self.selectById(category_id)
-        category_to_modify.__dict__.update(**CategoryDataStructure(**category_data).__dict__)
+        category_data_structure = CategoryDataStructure(**category_data)
+        if category_to_modify.parent != category_data_structure.parent:
+            category_to_modify.move_to(category_data_structure.parent, position='first-child')
+        category_to_modify.__dict__.update(**category_data_structure.__dict__)
         category_to_modify.save()
         return category_to_modify
 

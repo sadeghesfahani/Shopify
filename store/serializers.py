@@ -5,7 +5,7 @@ from .models import *
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'parent','shown_in_menu_bar']
+        fields = ['id', 'name', 'parent','shown_in_menu_bar','level']
 
 
 class OptionSerializer(serializers.ModelSerializer):
