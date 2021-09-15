@@ -26,4 +26,4 @@ class Admin(BaseMarketObjectManager):
         return self.selectById(self.request.user.id) if self.request.user.is_authenticated else None
 
     def getStore(self):
-        return self.currentUser().store_set.get()
+        return self.currentUser().admins.get()
