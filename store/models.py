@@ -60,7 +60,7 @@ class Discount(models.Model):
 class Store(models.Model):
     name = models.CharField(max_length=120)
     description = models.CharField(max_length=600)
-    admins = models.ManyToManyField(User)
+    admins = models.ManyToManyField(User,related_name='admins')
 
     def __str__(self):
         return f"{self.name}"

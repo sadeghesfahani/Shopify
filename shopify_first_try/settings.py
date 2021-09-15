@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'mptt',
+    'rest_framework.authtoken',
 
 ]
 
@@ -130,6 +131,6 @@ AUTH_USER_MODEL = 'account.User'
 BASE_URL = 'http://127.0.0.1:8000'
 # AUTHENTICATION_BACKENDS = ['shopify_first_try.auth.CustomBackend']
 
-ALLOWED_HOSTS=['*']
+ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = True
