@@ -19,12 +19,14 @@ class Category(BaseMarketObjectManager):
         return self.targetObject.objects.get(pk=category_id).get_family()
 
     @handleError(targetObject)
-    def getParents(self, category_id):
-        return self.targetObject.objects.get(pk=category_id).get_ancestors(include_self=False)
+    def getParents(self, category_id,include_self=False):
+        return self.targetObject.objects.get(pk=category_id).get_ancestors(include_self=include_self)
 
     @handleError(targetObject)
-    def getParent(self, category_id):
-        return self.targetObject.objects.get(pk=category_id).get_ancestors(ascending=True, include_self=False)[0]
+    def getParent(self, category_id,include_self=False):
+        parents = self.targetObject.objects.get(pk=category_id).get_ancestors(ascending=True, include_self=include_self)
+        print(parents)
+        return parents
 
     @handleError(targetObject)
     def getRoot(self, category_id):

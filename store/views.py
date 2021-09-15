@@ -1,3 +1,4 @@
+import mptt
 from django.http import Http404
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -37,6 +38,40 @@ class CategoryAPI(viewsets.ViewSet, generics.GenericAPIView):
     def family(self, request, pk=None):
         market = Market(request)
         return Response(self.serializer_class(market.category.getFamily(pk), many=True).data)
+
+    @action(detail=True)
+    def all_parents(self, request, pk=None):
+        market = Market(request)
+        if 'self' in request.GET:
+            return Response(self.serializer_class(market.category.getParents(pk, True), many=True).data)
+        else:
+            return Response(self.serializer_class(market.category.getParents(pk), many=True).data)
+
+    @action(detail=True)
+    def parent(self, request, pk=None):
+        market = Market(request)
+        parents = market.category.getParent(pk)
+        include_self = False
+        if 'self' in request.GET:
+            include_self = True
+        try:
+            len(parents)
+            return Response(self.serializer_class(market.category.getParent(pk, include_self), many=True).data)
+        except TypeError:
+            return Response(self.serializer_class(market.category.getParent(pk, include_self), many=False).data)
+
+    @action(detail=True)
+    def get_root(self, request, pk=None):
+        market = Market(request)
+        return Response(self.serializer_class(market.category.getRoot(pk), many=False).data)
+
+    @action(detail=False)
+    def roots(self, request):
+        market = Market(request)
+        try:
+            return Response(self.serializer_class(market.category.getRoots(), many=True).data)
+        except TypeError:
+            return Response(self.serializer_class(market.category.getRoots(), many=False).data)
 
     def createNewCategory(self):
         market = Market(self.request)

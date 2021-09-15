@@ -282,17 +282,24 @@ class TestUrl(TestCase):
         response = self.client.post(reverse('category-list'), json_data, content_type='application/json',
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         second_parent = response.data['id']
-        json_data = json.dumps({'name': "sub1",'parent': categpry_id})
+        json_data = json.dumps({'name': "sub1", 'parent': categpry_id})
         response = self.client.post(reverse('category-list'), json_data, content_type='application/json',
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         category_id = response.data['id']
-        print(response.data)
-        json_data = json.dumps({'name': "root1-modified", 'shown_in_menu_bar': False,'parent':second_parent })
+        json_data = json.dumps({'name': "root1-modified", 'shown_in_menu_bar': False, 'parent': second_parent})
         response = self.client.put(reverse('category-detail', args=(category_id,)), json_data,
                                    content_type='application/json',
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.data['name'],'root1-modified')
-        self.assertEqual(response.data['shown_in_menu_bar'],False)
-        self.assertEqual(response.data['parent'],second_parent)
-        print(response.data)
+        self.assertEqual(response.data['name'], 'root1-modified')
+        self.assertEqual(response.data['shown_in_menu_bar'], False)
+        self.assertEqual(response.data['parent'], second_parent)
+
+    def test_user_registration(self):
+        registered_user = BaseUserModel.register(
+            UserDataStructure(first_name="admin", last_name="admin", email="admin@gmail.com",
+                              password="jshkfjsjhfgshjgfjh"))
+        logged_in_user = BaseUserModel.getUser(UserDataStructure(email="admin@gmail.com",
+                                                                 password="jshkfjsjhfgshjgfjh"))
+
+        self.assertEqual(registered_user, logged_in_user)
