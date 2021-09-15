@@ -10,7 +10,7 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=self.normalize_email(email),
                           first_name=first_name,
                           last_name=last_name,
-                          type=user_type,
+                          user_type=user_type,
                           username=email,
                           )
 
