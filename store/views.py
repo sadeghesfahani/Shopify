@@ -119,7 +119,7 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
         return Response(self.modifyProduct(pk))
 
     @action(detail=False)
-    def find(self, request, pk=None):
+    def find(self, request):
         products = self.get_queryset()
         if 'store' in request.GET:
             products.filterByStore(request.GET['store'])

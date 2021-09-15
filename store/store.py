@@ -10,7 +10,7 @@ class Store(BaseMarketObjectManager):
         return self.targetObject.objects.get(admins__in=self.request.user)
 
     def addStoreDataStructure(self, **kwargs):
-        return StoreDataStructure(self.request, **kwargs)
+        return StoreDataStructure(request=self.request, **kwargs)
 
     def addStore(self, **kwargs):
         store_data_structure = self.addStoreDataStructure(**kwargs).__dict__
@@ -47,7 +47,7 @@ class StoreDataStructure:
     this data structure will always come into place to avoid and handle unexpected errors during transforming information
     """
 
-    def __init__(self, request, name, description, admins=None):
+    def __init__(self, name, description, admins=None, request=None):
         self.name = name
         self.description = description
         if admins is None:
