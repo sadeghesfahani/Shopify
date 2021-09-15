@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 from rest_framework import viewsets, generics
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from shopify_first_try import settings
@@ -26,7 +27,10 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
 
     def retrieve(self, request, pk=None):
         user = BaseUserModel(request).getUserByToken(pk)
-        return Response(UserSerializerShow(user,many=False).data)
+        if request.user == user:
+            return Response(UserSerializerShow(user, many=False).data)
+        else:
+            raise PermissionDenied('You are not allowed to see others profile information')
 
 # class AjaxMixin(FormView):
 #     def get_form_kwargs(self):

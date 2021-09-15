@@ -7,6 +7,12 @@ class TokenSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=600)
 
 
+class StoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Store
+        fields = ['id', 'name']
+
+
 class UserSerializerRegister(serializers.Serializer):
     first_name = serializers.CharField(max_length=120, required=False)
     last_name = serializers.CharField(max_length=120, required=False)
@@ -17,7 +23,8 @@ class UserSerializerRegister(serializers.Serializer):
 
 class UserSerializerShow(serializers.Serializer):
     counter = 0
-    admins = serializers.SerializerMethodField()
+    admins = StoreSerializer(serializers.SerializerMethodField(), many=True)
+
     first_name = serializers.CharField(max_length=120, required=False)
     last_name = serializers.CharField(max_length=120, required=False)
     email = serializers.EmailField(max_length=120, required=True)
