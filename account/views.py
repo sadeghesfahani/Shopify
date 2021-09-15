@@ -25,7 +25,8 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
         token = {'token': token_key}
         return Response(TokenSerializer(token, many=False).data)
 
-    def retrieve(self, request, pk=None):
+    @staticmethod
+    def retrieve(request, pk=None):
         user = BaseUserModel(request).getUserByToken(pk)
         if request.user == user:
             return Response(UserSerializerShow(user, many=False).data)

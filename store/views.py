@@ -6,6 +6,7 @@ from rest_framework import generics, viewsets, permissions
 
 from .market import Market
 from store.serializers import *
+from .permissions import CategoryPermission, ProductPermissionCreate, ProductPermissionEdit
 
 
 class CategoryAPI(viewsets.ViewSet, generics.GenericAPIView):
@@ -93,6 +94,11 @@ class CategoryAPI(viewsets.ViewSet, generics.GenericAPIView):
         modified_category = market.category.modifyCategory(category_id=pk, category_data=self.request.data)
         return self.serializer_class(modified_category, many=False).data
 
+    def get_permissions(self):
+        if self.action == "create" or self.action == "update":
+            self.permission_classes = [CategoryPermission]
+        return super(CategoryAPI, self).get_permissions()
+
 
 class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = ProductSerializer
@@ -162,5 +168,7 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
 
     def get_permissions(self):
         if self.action == "create":
-            self.permission_classes = [permissions.IsAuthenticated]
+            self.permission_classes = [ProductPermissionCreate]
+        elif self.action == 'update':
+            self.permission_classes = [ProductPermissionEdit]
         return super(ProductAPI, self).get_permissions()

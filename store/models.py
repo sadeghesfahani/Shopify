@@ -8,9 +8,6 @@ from account.models import Address
 User = get_user_model()
 
 
-# class Category(models.Model):
-#     name = models.CharField(max_length=60, blank=False, null=False)
-#     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
 class Category(MPTTModel):
     name = models.CharField(max_length=160, blank=False, null=False)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
@@ -60,7 +57,7 @@ class Discount(models.Model):
 class Store(models.Model):
     name = models.CharField(max_length=120)
     description = models.CharField(max_length=600)
-    admins = models.ManyToManyField(User,related_name='admins')
+    admins = models.ManyToManyField(User, related_name='admins')
 
     def __str__(self):
         return f"{self.name}"
