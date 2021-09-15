@@ -32,6 +32,6 @@ class ProductPermissionEdit(BasePermission):
                 return True
             elif request.user.is_department_admin:
                 market = Market(request)
-                if market.product.selectById(request.data['id']).store in request.user.admins:
+                if market.product.selectById(request.parser_context["kwargs"]['pk']).store in request.user.admins.all():
                     return True
         return False

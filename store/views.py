@@ -4,6 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import generics, viewsets, permissions
 
+from shopify_first_try import settings
+from .errors import handleError
 from .market import Market
 from store.serializers import *
 from .permissions import CategoryPermission, ProductPermissionCreate, ProductPermissionEdit
@@ -136,7 +138,10 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
 
     def prepareData(self):
         market = Market(self.request)
-        store = market.admin.getStore()
+        try:
+            store = market.admin.getStore()
+        except Store.DoesNotExist:
+            store = settings.MEGA_STORE_ID
         data = self.request.data
         data['store'] = store
         return data

@@ -1,0 +1,70 @@
+[
+  {
+    "first_name": "admin1",
+    "last_name": "admin1",
+    "user_type": 2,
+    "email": "admin1@gmail.com",
+    "password": "adminadminadmin"
+  },
+  {
+    "first_name": "admin2",
+    "last_name": "admin2",
+    "user_type": 2,
+    "email": "admin2@gmail.com",
+    "password": "adminadminadmin"
+  },
+  {
+    "first_name": "admin3",
+    "last_name": "admin3",
+    "user_type": 2,
+    "email": "admin3@gmail.com",
+    "password": "adminadminadmin"
+  }
+],
+[
+{
+"name": "category1",
+"parent": null
+},
+{
+"name": "category2",
+"parent": null
+},
+{
+"name": "category3",
+"parent": null
+},
+{
+"name": "sub-1-1",
+"parent": 1
+},
+{
+"name": "sub-1-2",
+"parent": 1
+},
+{
+"name": "sub-2-1",
+"parent": 2
+},
+{
+"name": "sub-3-1",
+"parent": 3
+}
+],
+[
+{
+"name": "product1",
+"description": "category-1 and user is admin and price is 5000",
+"category" : 1,
+"price": 5000
+},
+{
+"name": "product2",
+"description": "category-2 and user is admin1 and price is 5000",
+"category": 2,
+"price": 5000
+}
+],
+{
+'_request': <WSGIRequest: PUT '/product/1/'>, 'parsers': [<rest_framework.parsers.JSONParser object at 0x00000142F699C760>, <rest_framework.parsers.FormParser object at 0x00000142F699C790>, <rest_framework.parsers.MultiPartParser object at 0x00000142F699C730>], 'authenticators': [<rest_framework.authentication.TokenAuthentication object at 0x00000142F699C670>], 'negotiator': <rest_framework.negotiation.DefaultContentNegotiation object at 0x00000142F699C550>, 'parser_context': {'view': <store.views.ProductAPI object at 0x00000142F5B1D700>, 'args': (), 'kwargs': {'pk': '1'}, 'request': <rest_framework.request.Request: PUT '/product/1/'>, 'encoding': 'utf-8'}, '_data': <class 'rest_framework.request.Empty'>, '_files': <class 'rest_framework.request.Empty'>, '_full_data': <class 'rest_framework.request.Empty'>, '_content_type': <class 'rest_framework.request.Empty'>, '_stream': <class 'rest_framework.request.Empty'>, 'accepted_renderer': <rest_framework.renderers.JSONRenderer object at 0x00000142F699C880>, 'accepted_media_type': 'application/json', 'version': None, 'versioning_scheme': None, '_authenticator': <rest_framework.authentication.TokenAuthentication object at 0x00000142F699C670>, '_user': <User: admin1>, '_auth': <Token: 662c2e07c774cb0d534443909f2918f09a661861>
+}
