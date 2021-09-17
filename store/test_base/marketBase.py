@@ -76,6 +76,9 @@ class TestBase(TestCase):
         self.product_dummy_data_json_without_store = json.dumps(
             {"name": "dummy product", "description": "dummy product", "price": 54654564,
              "category": self.root_category_1.id})
+        self.product_dummy_data_json_without_store_without_name = json.dumps(
+            {"description": "dummy product", "price": 54654564,
+             "category": self.root_category_1.id})
 
     def sendPostRequest(self, url, data):
         return self.client.post(reverse(url), **RequestDataStructure(data).__dict__)

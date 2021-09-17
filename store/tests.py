@@ -41,10 +41,8 @@ class TestUrl(TestBase):
         # permissions
         response = self.client.get(reverse('product-list'))
         self.assertEqual(response.status_code, 200)
-
         response = self.client.get(reverse('product-detail', args=(self.product_1.id,)))
         self.assertEqual(response.status_code, 200)
-
         response = self.sendPostRequestWithUser(user=self.customer, url='product-list', data=self.product_dummy_data)
         self.assertEqual(response.status_code, 403)
 
@@ -58,7 +56,6 @@ class TestUrl(TestBase):
                                                 data=self.product_dummy_data_json)
         self.assertEqual(response.status_code, 200)
         # admin permission
-
         response = self.sendPostRequestWithUser(user=self.user_admin, url='product-list',
                                                 data=self.product_dummy_data_json)
         self.assertEqual(response.status_code, 200)
@@ -73,4 +70,7 @@ class TestUrl(TestBase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(store.getStore(response.data['store']), self.user_store_admin_1['user'].admins.all())
 
-
+        # bad request
+        response = self.sendPostRequestWithUser(user=self.user_store_admin_1, url='product-list',
+                                                data=self.product_dummy_data_json_without_store_without_name)
+        self.assertEqual(response.status_code, 400)
