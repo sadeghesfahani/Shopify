@@ -1,6 +1,8 @@
 from rest_framework.permissions import BasePermission
 
+from store.errors import handleError
 from store.market import Market
+from store.models import Store
 
 
 class CategoryPermission(BasePermission):
@@ -16,14 +18,28 @@ class CategoryPermission(BasePermission):
 
 
 class ProductPermissionCreate(BasePermission):
+    @handleError(Store)
     def has_permission(self, request, view):
         if request.user.is_authenticated:
             if request.user.is_admin:
                 return True
             elif request.user.is_department_admin:
-                return True
+                market = Market(request)
+                if 'store' in request.data:
+                    if market.store.selectById(request.data['store']) in request.user.admins.all():
+                        return True
+                else:
+                    return True
 
         return False
+
+
+
+
+
+
+
+
 
 class ProductPermissionEdit(BasePermission):
     def has_permission(self, request, view):

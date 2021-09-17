@@ -6,8 +6,8 @@ from rest_framework.test import APIClient
 
 from account.users import BaseUserModel, UserDataStructure
 from store.category import Category
+from store.product import Product
 from store.store import Store
-
 
 
 class TestBase(TestCase):
@@ -23,6 +23,7 @@ class TestBase(TestCase):
         password = 'this is gonna be a dummy password'
         store = Store()
         category = Category()
+        product = Product()
         user_admin = UserDataStructure(first_name='admin', last_name='admin', email='admin@gmail.com',
                                        password=password, user_type=1)
         user_store_admin_1 = UserDataStructure(first_name='admin1', last_name='admin', email='admin1@gmail.com',
@@ -61,6 +62,21 @@ class TestBase(TestCase):
         self.dummy_category = json.dumps({"name": "something"})
         self.dummy_category_changed = json.dumps({"name": "changed", "parent": 2, "shown_in_menu_bar": False})
 
+        self.product_1 = product.addNew(
+            {'name': 'product1', 'description': 'product1', 'price': 5000, 'store': self.store_2,
+             "category": self.root_category_1})
+
+        self.product_dummy_data = {'name': 'dummy product', 'description': 'dummy product', 'price': 54654564,
+                                   'store': self.store_2,
+                                   "category": self.root_category_1}
+        self.product_dummy_data_json = json.dumps(
+            {"name": "dummy product", "description": "dummy product", "price": 54654564,
+             "store": self.store_2.id,
+             "category": self.root_category_1.id})
+        self.product_dummy_data_json_without_store = json.dumps(
+            {"name": "dummy product", "description": "dummy product", "price": 54654564,
+             "category": self.root_category_1.id})
+
     def sendPostRequest(self, url, data):
         return self.client.post(reverse(url), **RequestDataStructure(data).__dict__)
 
@@ -75,6 +91,12 @@ class TestBase(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='token ' + user['token'])
         return client.put(reverse(url, args=(pk,)), **RequestDataStructure(data).__dict__)
+
+    @staticmethod
+    def sendGetWithPk(url, pk):
+        client = APIClient()
+        return client.get(reverse(url, args=(pk,)))
+
 
 # data structures
 class RequestDataStructure:

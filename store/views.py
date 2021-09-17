@@ -138,12 +138,13 @@ class ProductAPI(viewsets.ViewSet, generics.GenericAPIView):
 
     def prepareData(self):
         market = Market(self.request)
-        try:
-            store = market.admin.getStore()
-        except Store.DoesNotExist:
-            store = settings.MEGA_STORE_ID
         data = self.request.data
-        data['store'] = store
+        if 'store' not in self.request.data:
+            try:
+                store = market.admin.getStore()
+            except Store.DoesNotExist:
+                store = settings.MEGA_STORE_ID
+            data['store'] = store
         return data
 
     def get_object(self, pk=None):

@@ -9,7 +9,7 @@ class Customer(BaseMarketObjectManager):
 
     def __init__(self, request):
         super(Customer, self).__init__(request)
-        self.querySet = {'TYPES': User.CUSTOMER}
+        self.querySet = {'user_type': User.CUSTOMER}
 
     def currentUser(self):
         return self.selectById(self.request.user.id)
@@ -20,7 +20,7 @@ class Admin(BaseMarketObjectManager):
 
     def __init__(self, request):
         super(Admin, self).__init__(request)
-        self.querySet = {'TYPES': User.DEPARTMENT_ADMIN}
+        self.querySet = {'user_type': User.DEPARTMENT_ADMIN}
 
     def currentUser(self):
         return self.selectById(self.request.user.id) if self.request.user.is_authenticated else None

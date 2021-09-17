@@ -29,7 +29,7 @@ class Product(BaseMarketObjectManager):
         return self
 
     def addNew(self, product_data):
-        new_product = self.targetObject(**ProductDataStructure(self.request, **product_data).__dict__)
+        new_product = self.targetObject(**ProductDataStructure(**product_data).__dict__)
         new_product.save()
         self.priceObject.addNew(product=new_product, price=new_product.price)
         self.handleAttributes(new_product.id)
@@ -214,7 +214,7 @@ class ProductDataStructure:
     this data structure will always come into place to avoid and handle unexpected errors during transforming information
     """
 
-    def __init__(self, request, name, category, description, store, price=None, *args, **kwargs):
+    def __init__(self, name, category, description, store, price=None, *args, **kwargs):
         self.name = name
         if isinstance(category, int) or isinstance(category, str):
             self.category = Category().selectById(category)
