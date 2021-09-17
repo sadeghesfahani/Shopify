@@ -1,6 +1,6 @@
 import functools
 from django.http import Http404
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, APIException
 
 
 def handleError(target_object):
@@ -15,6 +15,15 @@ def handleError(target_object):
                 raise PermissionDenied(msg)
             except AttributeError:
                 pass
+            except TypeError:
+                raise BadRequest
+
         return wrapper_handleError
 
     return decorator_handleError
+
+
+class BadRequest(APIException):
+    status_code = 400
+    default_detail = 'bad data recived, check the structure is needed by server to proccess'
+    default_code = "bad request"

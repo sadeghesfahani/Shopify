@@ -28,6 +28,7 @@ class Product(BaseMarketObjectManager):
         self.querySet['store_id'] = store_id
         return self
 
+    @handleError(targetObject)
     def addNew(self, product_data):
         new_product = self.targetObject(**ProductDataStructure(**product_data).__dict__)
         new_product.save()

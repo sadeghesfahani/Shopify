@@ -1,5 +1,8 @@
 from rest_framework.reverse import reverse
 from rest_framework.utils import json
+
+from store.Users import Admin
+from store.store import Store
 from store.test_base.marketBase import TestBase
 
 
@@ -34,6 +37,7 @@ class TestUrl(TestBase):
         self.assertEqual(response.data['parent'], json.loads(self.dummy_category_changed)['parent'])
 
     def testProduct(self):
+        store = Store()
         # permissions
         response = self.client.get(reverse('product-list'))
         self.assertEqual(response.status_code, 200)
@@ -59,7 +63,14 @@ class TestUrl(TestBase):
                                                 data=self.product_dummy_data_json)
         self.assertEqual(response.status_code, 200)
 
+        # store handling test
         response = self.sendPostRequestWithUser(user=self.user_store_admin_2, url='product-list',
                                                 data=self.product_dummy_data_json_without_store)
-        print(response.data)
         self.assertEqual(response.status_code, 200)
+        self.assertIn(store.getStore(response.data['store']), self.user_store_admin_2['user'].admins.all())
+        response = self.sendPostRequestWithUser(user=self.user_store_admin_1, url='product-list',
+                                                data=self.product_dummy_data_json_without_store)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(store.getStore(response.data['store']), self.user_store_admin_1['user'].admins.all())
+
+
