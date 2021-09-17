@@ -26,7 +26,7 @@ class UserDataStructure:
 
 
 class BaseUserModel:
-    def __init__(self, request):
+    def __init__(self, request= None):
         self.request = request
 
     def logUserInByInfo(self, user_data_structure):
@@ -59,3 +59,8 @@ class BaseUserModel:
     @handleError(User)
     def getUserByToken(token):
         return User.objects.get(auth_token=token)
+
+    @staticmethod
+    @handleError(User)
+    def getUserById(user_id):
+        return User.objects.get(pk=user_id)

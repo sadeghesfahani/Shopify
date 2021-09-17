@@ -13,7 +13,7 @@ class Market:
     build separately to have the least interaction with each other that may cause fragility during adding new features.
     """
 
-    def __init__(self, request):
+    def __init__(self, request=None):
         self.product = Product(request)
         self.store = Store(request)
         self.customer = Customer(request)
