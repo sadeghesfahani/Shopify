@@ -69,7 +69,7 @@ class Product(models.Model):
     description = models.CharField(max_length=1200, blank=True, null=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, default=1)
     price = models.IntegerField()
-    price_without_discount = models.IntegerField()
+    price_without_discount = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -100,7 +100,7 @@ class Price(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='price_product')
     price = models.IntegerField()
     date = models.DateTimeField(auto_now_add=True)
-    price_without_discount = models.IntegerField(null=True, default=0)
+    price_without_discount = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.id:

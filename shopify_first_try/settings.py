@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'account',
     'department',
     'store',
+    'card',
     'rest_framework',
     'corsheaders',
     'mptt',
