@@ -83,9 +83,19 @@ class CardDataStructure:
 class AdditionalOption(BaseMarketObjectManager):
     targetObject = AdditionalOptionModel
 
+    def addNew(self, name, description, option_type, cost):
+        newly_added_addtional_option = self.targetObject(name=name, description=description, option_type=option_type,
+                                                         cost=cost)
+        newly_added_addtional_option.save()
+        return newly_added_addtional_option
+
 
 class Delivery(BaseMarketObjectManager):
     targetObject = DeliveryModel
 
-    def addNew(self):
-        pass
+    def addNew(self, name, price):
+        newly_added_delivery = self.targetObject(name=name, price=price)
+        newly_added_delivery.save()
+        return newly_added_delivery
+
+
