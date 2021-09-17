@@ -78,4 +78,4 @@ class User(AbstractUser):
 
 class Address(models.Model):
     address = models.CharField(max_length=400, blank=False, null=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_address')

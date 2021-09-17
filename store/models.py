@@ -69,16 +69,14 @@ class Product(models.Model):
     description = models.CharField(max_length=1200, blank=True, null=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, default=1)
     price = models.IntegerField()
+    price_without_discount = models.IntegerField()
 
     def __str__(self):
         return self.name
 
     @property
     def attributes(self):
-        attributes_dict = dict()
         attributes = Attribute.objects.filter(product_id=self.id)
-        # for attr in attributes:
-        #     attributes_dict[attr] = Option.objects.filter(attribute_id=attr.id)
         return attributes
 
 
@@ -102,11 +100,13 @@ class Price(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='price_product')
     price = models.IntegerField()
     date = models.DateTimeField(auto_now_add=True)
+    price_without_discount = models.IntegerField(null=True, default=0)
 
     def save(self, *args, **kwargs):
         if not self.id:
             product = Product.objects.get(pk=self.product.id)
             product.price = self.price
+            product.price_without_discount = self.price_without_discount
             product.save()
         return super(Price, self).save(*args, **kwargs)
 
@@ -148,31 +148,31 @@ class Comment(models.Model):
     rank = models.IntegerField()
 
 
-class Card(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    WAITING_FOR_PAYMENT = 0
-    PENDING = 1
-    IN_PROCESS = 2
-    SENT = 3
-    DONE = 4
-    CHOICES = [
-        (WAITING_FOR_PAYMENT, 'Waiting to pay'),
-        (PENDING, 'Pending'),
-        (IN_PROCESS, 'In process'),
-        (SENT, 'Sent'),
-        (DONE, 'Done'),
-    ]
-    status = models.IntegerField(choices=CHOICES, default=0)
-    payment_info = models.CharField(max_length=160)
-    total_price = models.IntegerField()
-    discount = models.ForeignKey(Discount, on_delete=models.PROTECT)
-    address_to_send_good = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='cards_good')
-    address_to_send_invoice = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='cards_invoice')
-    receive_time = models.DateTimeField()
-
-
-class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    options = models.ManyToManyField(Option)
-    attriubute_set = models.ForeignKey(AttributeSet, on_delete=models.CASCADE)
+# class Card(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.PROTECT)
+#     WAITING_FOR_PAYMENT = 0
+#     PENDING = 1
+#     IN_PROCESS = 2
+#     SENT = 3
+#     DONE = 4
+#     CHOICES = [
+#         (WAITING_FOR_PAYMENT, 'Waiting to pay'),
+#         (PENDING, 'Pending'),
+#         (IN_PROCESS, 'In process'),
+#         (SENT, 'Sent'),
+#         (DONE, 'Done'),
+#     ]
+#     status = models.IntegerField(choices=CHOICES, default=0)
+#     payment_info = models.CharField(max_length=160)
+#     total_price = models.IntegerField()
+#     discount = models.ForeignKey(Discount, on_delete=models.PROTECT)
+#     address_to_send_good = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='cards_good')
+#     address_to_send_invoice = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='cards_invoice')
+#     receive_time = models.DateTimeField()
+#
+#
+# class Order(models.Model):
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     quantity = models.IntegerField()
+#     options = models.ManyToManyField(Option)
+#     attriubute_set = models.ForeignKey(AttributeSet, on_delete=models.CASCADE)
