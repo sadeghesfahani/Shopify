@@ -1,4 +1,6 @@
 from rest_framework.exceptions import PermissionDenied
+
+from shopify_first_try.utils import getObject
 from .errors import handleError
 from .market_manager import BaseMarketObjectManager
 from .models import Product as ProductModel, Attribute as AttributeModel, Option as OptionModel, Price as PriceModel
@@ -193,19 +195,14 @@ class Price:
 class AttributeDataStructure:
     def __init__(self, name, product, *args, **kwargs):
         self.name = name
-        if isinstance(product, int) or isinstance(product, str):
-            self.product = Product().selectById(product)
-        else:
-            self.product = product
+        self.product = getObject(Product(),product)
+
 
 
 class OptionDataStructure:
     def __init__(self, name, attribute, type, price, *args, **kwargs):
         self.name = name
-        if isinstance(attribute, int) or isinstance(attribute, str):
-            self.attribute = Attribute().getAttributeById(attribute)
-        else:
-            self.attribute = attribute
+        self.attribute = getObject(Attribute(),attribute)
         self.type = type
         self.price = price
 
@@ -217,13 +214,7 @@ class ProductDataStructure:
 
     def __init__(self, name, category, description, store, price=None, *args, **kwargs):
         self.name = name
-        if isinstance(category, int) or isinstance(category, str):
-            self.category = Category().selectById(category)
-        else:
-            self.category = category
+        self.category = getObject(Category(), category)
         self.description = description
-        if isinstance(store, int) or isinstance(store, str):
-            self.store = Store().selectById(store)
-        else:
-            self.store = store
+        self.store = getObject(Store(), store)
         self.price = price

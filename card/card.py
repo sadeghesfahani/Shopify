@@ -1,16 +1,39 @@
 from account.users import BaseUserModel
+from shopify_first_try.utils import IsId, getObject
 from store.errors import handleError
 from store.market import Market
 from store.discount import Discount
+from store.market_manager import BaseMarketObjectManager
 from store.product import Option
-from .models import Order as OrderModel, Card as CardModel
+from .models import Order as OrderModel, Card as CardModel, AdditionalOption as AdditionalOptionModel, \
+    Delivery as DeliveryModel
 
 
 class Card:
     targetObject = CardModel
 
-    def addNew(self):
-        pass
+    def addNew(self, user, discount, additional_option, delivery):
+        card_structured_data = CardDataStructure(user, discount, additional_option, delivery)
+        newly_added_card = self.targetObject(**card_structured_data.__dict__)
+        newly_added_card.save()
+        return newly_added_card
+
+    def addOrder(self, card, orders):
+        if IsId(card):
+            card_object = self.selectById(card)
+        else:
+            card_object = card
+        if isinstance(orders, list):
+            for order in orders:
+                order_to_add = getObject(Order(), order)
+                card_object.orders.add(order_to_add)
+        else:
+            order_to_add = getObject(Order(), orders)
+            card_object.orders.add(order_to_add)
+
+    @handleError(targetObject)
+    def selectById(self, card_id):
+        return self.targetObject.objects.get(pk=card_id)
 
 
 class Order:
@@ -20,8 +43,8 @@ class Order:
     def selectById(self, order_id):
         return self.targetObject.objects.get(pk=order_id)
 
-    def addNew(self, product, product_option, quantity, user):
-        order_structured_data = OrderDataStructure(product, product_option, quantity, user)
+    def addNew(self, product, product_option, quantity):
+        order_structured_data = OrderDataStructure(product, product_option, quantity)
         newly_added_order = self.targetObject(**order_structured_data.__dict__)
         newly_added_order.save()
         return newly_added_order
@@ -31,22 +54,17 @@ class OrderDataStructure:
     def __init__(self, product, product_option, quantity):
         option = Option()
         market = Market()
-        if isinstance(product, int) or isinstance(product, str):
-            self.product = market.product.selectById(product)
-        else:
-            self.product = product
-
-        if isinstance(product_option, int) or isinstance(product_option, str):
-            self.option = option.selectById(product_option)
-        else:
-            self.option = option
+        self.product = getObject(market.product, product)
+        self.option = getObject(option, product_option)
         self.count = quantity
 
 
 class CardDataStructure:
-    def __init__(self, user, discount):
+    def __init__(self, user, discount, additional_option, delivery):
         discount_object = Discount()
-        if isinstance(user, int) or isinstance(user, str):
+        additional_option_object = AdditionalOption()
+        delivery_object = Delivery()
+        if IsId(user):
             try:
                 user_id = int(user)
                 self.user = BaseUserModel().getUserById(user_id)
@@ -55,7 +73,15 @@ class CardDataStructure:
                 self.user = BaseUserModel().getUserByToken(token)
         else:
             self.user = user
-        if isinstance(discount, int) or isinstance(discount, str):
-            self.discount = discount_object.selectById(discount)
-        else:
-            self.discount = discount
+
+        self.discount = getObject(discount_object, discount)
+        self.additional_option = getObject(additional_option_object, additional_option)
+        self.delivery = getObject(delivery_object, delivery)
+
+
+class AdditionalOption(BaseMarketObjectManager):
+    targetObject = AdditionalOptionModel
+
+
+class Delivery(BaseMarketObjectManager):
+    targetObject = DeliveryModel
