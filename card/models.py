@@ -11,7 +11,7 @@ User = get_user_model()
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     count = models.SmallIntegerField()
-    option = models.ForeignKey(Option, on_delete=models.PROTECT)
+    option = models.ForeignKey(Option, on_delete=models.PROTECT,null=True,blank=True)
 
     @property
     def order_price(self):

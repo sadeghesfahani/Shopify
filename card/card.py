@@ -12,13 +12,13 @@ from .models import Order as OrderModel, Card as CardModel, AdditionalOption as 
 class Card:
     targetObject = CardModel
 
-    def addNew(self, user, discount, additional_option, delivery):
+    def addNew(self, user, delivery, discount=None, additional_option=None):
         card_structured_data = CardDataStructure(user, discount, additional_option, delivery)
         newly_added_card = self.targetObject(**card_structured_data.__dict__)
         newly_added_card.save()
         return newly_added_card
 
-    def addOrder(self, card, orders):
+    def addOrderToCard(self, card, orders):
         if IsId(card):
             card_object = self.selectById(card)
         else:
@@ -30,6 +30,7 @@ class Card:
         else:
             order_to_add = getObject(Order(), orders)
             card_object.orders.add(order_to_add)
+        card_object.save()
 
     @handleError(targetObject)
     def selectById(self, card_id):
@@ -43,7 +44,7 @@ class Order:
     def selectById(self, order_id):
         return self.targetObject.objects.get(pk=order_id)
 
-    def addNew(self, product, product_option, quantity):
+    def addNew(self, product, quantity, product_option=None):
         order_structured_data = OrderDataStructure(product, product_option, quantity)
         newly_added_order = self.targetObject(**order_structured_data.__dict__)
         newly_added_order.save()
@@ -85,3 +86,6 @@ class AdditionalOption(BaseMarketObjectManager):
 
 class Delivery(BaseMarketObjectManager):
     targetObject = DeliveryModel
+
+    def addNew(self):
+        pass
