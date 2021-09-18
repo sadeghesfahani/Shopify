@@ -17,6 +17,8 @@ def handleError(target_object):
                 pass
             except TypeError:
                 raise BadRequest
+            except ValueError:
+                raise BadRequest
 
         return wrapper_handleError
 

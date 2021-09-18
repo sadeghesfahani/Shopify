@@ -15,14 +15,17 @@ class Order(models.Model):
 
     @property
     def order_price(self):
-        if self.option == 0:
-            return self.product.price * self.count
-        elif self.option == 1:
-            return self.option.price * self.count
-        elif self.option == 2:
-            return (self.product.price + self.option.price) * self.count
+        if self.option is not None:
+            if self.option == 0:
+                return self.product.price * self.count
+            elif self.option == 1:
+                return self.option.price * self.count
+            elif self.option == 2:
+                return (self.product.price + self.option.price) * self.count
+            else:
+                return self.product.price * (1 + (self.option.price / 100)) * self.count
         else:
-            return self.product.price * (1 + (self.option.price / 100)) * self.count
+            return self.product.price * self.count
 
 
 class Delivery(models.Model):
@@ -62,9 +65,9 @@ class Card(models.Model):
         (DONE, 'Done'),
     ]
     status = models.IntegerField(choices=CHOICES, default=0)
-    payment_info = models.CharField(max_length=160)
+    payment_info = models.CharField(max_length=160,blank=True,null=True)
     address_to_send_good = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_good')
-    address_to_send_invoice = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_invoice')
+    address_to_send_invoice = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_invoice',blank=True,null=True)
     receive_time = models.DateTimeField()
 
     @property
@@ -72,7 +75,9 @@ class Card(models.Model):
         total_cost = 0
         for order in self.orders.all():
             total_cost += order.order_price
-        return total_cost * (100 - self.discount.discount / 100)
+        print('total_order_price without discount',total_cost)
+        print('total_order_price with discount',total_cost * ((100 - self.discount.discount) / 100))
+        return total_cost * ((100 - self.discount.discount) / 100)
 
     @property
     def total_cost(self):
@@ -84,4 +89,6 @@ class Card(models.Model):
         else:
             option_included_price = self.total_products_cost
 
+        print('additional cost',self.additional_option.cost , "%")
+        print('delivery price',self.delivery.price)
         return self.delivery.price + option_included_price

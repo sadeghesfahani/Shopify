@@ -12,8 +12,16 @@ from .models import Order as OrderModel, Card as CardModel, AdditionalOption as 
 class Card:
     targetObject = CardModel
 
-    def addNew(self, user, delivery, discount=None, additional_option=None):
-        card_structured_data = CardDataStructure(user, discount, additional_option, delivery)
+    def addNew(self, user, delivery, receive_time, address_good, discount=None, additional_option=None,
+               address_invoice=None,
+               payment_info=None, status=0):
+        card_structured_data = CardDataStructure(user=user, discount=discount, additional_option=additional_option,
+                                                 delivery=delivery,
+                                                 receive_time=receive_time,
+                                                 address_good=address_good,
+                                                 address_invoice=address_invoice,
+                                                 payment_info=payment_info,
+                                                 status=status)
         newly_added_card = self.targetObject(**card_structured_data.__dict__)
         newly_added_card.save()
         return newly_added_card
@@ -35,6 +43,25 @@ class Card:
     @handleError(targetObject)
     def selectById(self, card_id):
         return self.targetObject.objects.get(pk=card_id)
+
+    @handleError(targetObject)
+    def addPaymentInfo(self, card, info):
+        card_object = getObject(self.targetObject, card)
+        card_object.payment_info = info
+        card_object.save()
+        return card_object
+
+    @handleError(targetObject)
+    def changeStatus(self, card, status):
+        if self.isStatusValid(status):
+            card_object = getObject(self.targetObject, card)
+            card_object.status = status
+        else:
+            raise ValueError
+
+    @staticmethod
+    def isStatusValid(status):
+        return True if 0 <= status <= 4 else False
 
 
 class Order:
@@ -61,7 +88,8 @@ class OrderDataStructure:
 
 
 class CardDataStructure:
-    def __init__(self, user, discount, additional_option, delivery):
+    def __init__(self, user, discount, additional_option, delivery, receive_time, address_good, address_invoice=None,
+                 payment_info=None, status=0):
         discount_object = Discount()
         additional_option_object = AdditionalOption()
         delivery_object = Delivery()
@@ -78,6 +106,11 @@ class CardDataStructure:
         self.discount = getObject(discount_object, discount)
         self.additional_option = getObject(additional_option_object, additional_option)
         self.delivery = getObject(delivery_object, delivery)
+        self.receive_time = receive_time
+        self.status = status
+        self.address_to_send_good = address_good
+        self.address_to_send_invoice = address_invoice
+        self.payment_info = payment_info
 
 
 class AdditionalOption(BaseMarketObjectManager):
@@ -97,5 +130,3 @@ class Delivery(BaseMarketObjectManager):
         newly_added_delivery = self.targetObject(name=name, price=price)
         newly_added_delivery.save()
         return newly_added_delivery
-
-
