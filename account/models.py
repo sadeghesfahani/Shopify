@@ -78,5 +78,5 @@ class User(AbstractUser):
 
 class Address(models.Model):
     address = models.CharField(max_length=400, blank=False, null=False)
-    postal_code = models.IntegerField()
+    postal_code = models.IntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_address')
