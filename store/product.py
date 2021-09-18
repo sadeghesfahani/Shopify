@@ -195,14 +195,13 @@ class Price:
 class AttributeDataStructure:
     def __init__(self, name, product, *args, **kwargs):
         self.name = name
-        self.product = getObject(Product(),product)
-
+        self.product = getObject(Product(), product)
 
 
 class OptionDataStructure:
     def __init__(self, name, attribute, type, price, *args, **kwargs):
         self.name = name
-        self.attribute = getObject(Attribute(),attribute)
+        self.attribute = getObject(Attribute(), attribute)
         self.type = type
         self.price = price
 

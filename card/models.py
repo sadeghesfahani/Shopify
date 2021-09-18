@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-
-# Create your models here.
 from account.models import Address
 from store.models import Product, Discount, Option
 
@@ -16,11 +14,11 @@ class Order(models.Model):
     @property
     def order_price(self):
         if self.option is not None:
-            if self.option == 0:
+            if self.option.type == 0:
                 return self.product.price * self.count
-            elif self.option == 1:
+            elif self.option.type == 1:
                 return self.option.price * self.count
-            elif self.option == 2:
+            elif self.option.type == 2:
                 return (self.product.price + self.option.price) * self.count
             else:
                 return self.product.price * (1 + (self.option.price / 100)) * self.count
@@ -75,8 +73,6 @@ class Card(models.Model):
         total_cost = 0
         for order in self.orders.all():
             total_cost += order.order_price
-        print('total_order_price without discount',total_cost)
-        print('total_order_price with discount',total_cost * ((100 - self.discount.discount) / 100))
         return total_cost * ((100 - self.discount.discount) / 100)
 
     @property
@@ -88,7 +84,4 @@ class Card(models.Model):
                 option_included_price = self.total_products_cost + self.additional_option.cost
         else:
             option_included_price = self.total_products_cost
-
-        print('additional cost',self.additional_option.cost , "%")
-        print('delivery price',self.delivery.price)
         return self.delivery.price + option_included_price
