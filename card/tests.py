@@ -1,6 +1,7 @@
 import datetime
 
 from django.test import TestCase
+from rest_framework.reverse import reverse
 
 from store.product import Attribute, AttributeDataStructure, OptionDataStructure
 from store.test_base.marketBase import TestBase
@@ -94,3 +95,5 @@ class TestCard(TestBase):
         self.card_object.addOrderToCard(card3, order6)
 
         self.assertEqual(card3.total_cost,146562.5)
+
+        print(reverse('card-detail',args=(5,)))

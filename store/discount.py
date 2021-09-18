@@ -17,13 +17,18 @@ class Discount(BaseMarketObjectManager):
         del structured_discount_data.users
         newly_added_discount = self.targetObject(**structured_discount_data.__dict__)
         newly_added_discount.save()
-        if isinstance(users_to_add,list):
+        if isinstance(users_to_add, list):
             for user in users_to_add:
                 newly_added_discount.users.add(user)
         else:
             newly_added_discount.users.add(users_to_add)
         newly_added_discount.save()
         return newly_added_discount
+
+    @handleError(targetObject)
+    def validate(self, user, code):
+        discount = self.targetObject.objects.get(code=code)
+        return True if discount.is_valid(user) else False
 
 
 class DiscountDataStructure:

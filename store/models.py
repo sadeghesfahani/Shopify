@@ -25,8 +25,9 @@ class Category(MPTTModel):
 
 class Discount(models.Model):
     name = models.CharField(max_length=60, null=False, blank=False)
+    code = models.CharField(max_length=60,null=True,blank=True)
     discount = models.IntegerField()
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User,blank=True)
     limits = models.PositiveSmallIntegerField(blank=True, null=True)
     expire = models.DateTimeField(null=True, blank=True)
 

@@ -130,3 +130,4 @@ class Delivery(BaseMarketObjectManager):
         newly_added_delivery = self.targetObject(name=name, price=price)
         newly_added_delivery.save()
         return newly_added_delivery
+
