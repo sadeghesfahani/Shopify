@@ -25,9 +25,9 @@ class Category(MPTTModel):
 
 class Discount(models.Model):
     name = models.CharField(max_length=60, null=False, blank=False)
-    code = models.CharField(max_length=60,null=True,blank=True)
+    code = models.CharField(max_length=60, null=True, blank=True)
     discount = models.IntegerField()
-    users = models.ManyToManyField(User,blank=True)
+    users = models.ManyToManyField(User, blank=True)
     limits = models.PositiveSmallIntegerField(blank=True, null=True)
     expire = models.DateTimeField(null=True, blank=True)
 
@@ -71,6 +71,7 @@ class Product(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, default=1)
     price = models.IntegerField()
     price_without_discount = models.IntegerField(default=0)
+    quantity = models.SmallIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -147,7 +148,6 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rank = models.IntegerField()
-
 
 # class Card(models.Model):
 #     user = models.ForeignKey(User, on_delete=models.PROTECT)

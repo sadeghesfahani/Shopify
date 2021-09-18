@@ -9,7 +9,7 @@ User = get_user_model()
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     count = models.SmallIntegerField()
-    option = models.ForeignKey(Option, on_delete=models.PROTECT,null=True,blank=True)
+    option = models.ForeignKey(Option, on_delete=models.PROTECT, null=True, blank=True)
 
     @property
     def order_price(self):
@@ -63,9 +63,10 @@ class Card(models.Model):
         (DONE, 'Done'),
     ]
     status = models.IntegerField(choices=CHOICES, default=0)
-    payment_info = models.CharField(max_length=160,blank=True,null=True)
+    payment_info = models.CharField(max_length=160, blank=True, null=True)
     address_to_send_good = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_good')
-    address_to_send_invoice = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_invoice',blank=True,null=True)
+    address_to_send_invoice = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_invoice',
+                                                blank=True, null=True)
     receive_time = models.DateTimeField()
 
     @property
@@ -85,3 +86,18 @@ class Card(models.Model):
         else:
             option_included_price = self.total_products_cost
         return self.delivery.price + option_included_price
+
+    def save(self, *args, **kwargs):
+        if self.status == 1:
+            if self.discount.discount_type == self.discount.FIRST_COME_FIRST_SERVE:
+                self.discount.limits -= 1
+            elif self.discount.discount_type == self.discount.USERS:
+                self.discount.users.remove(self.user)
+
+            for order in self.orders.all():
+                order.product.quantity -= order.count
+                order.product.save()
+            self.status = 2
+            self.save()
+
+        super(Card, self).save(*args, **kwargs)
