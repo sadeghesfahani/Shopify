@@ -74,7 +74,7 @@ class Product(models.Model):
     quantity = models.SmallIntegerField(default=0)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     @property
     def attributes(self):
@@ -112,6 +112,8 @@ class Price(models.Model):
             product.save()
         return super(Price, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return self.price
 
 class Attribute(models.Model):
     name = models.CharField(max_length=120, null=False, blank=False)
@@ -120,7 +122,8 @@ class Attribute(models.Model):
     @property
     def options(self):
         return Option.objects.filter(attribute_id=self.id)
-
+    def __str__(self):
+        return self.name
 
 class Option(models.Model):
     name = models.CharField(max_length=120, null=False, blank=False)
@@ -137,6 +140,10 @@ class Option(models.Model):
     ]
     type = models.IntegerField(choices=CHOICES, default=0)
     price = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.name} - type:{self.type}- {self.price}"
+
 
 
 class AttributeSet(models.Model):

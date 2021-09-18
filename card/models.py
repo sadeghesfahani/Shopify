@@ -25,6 +25,9 @@ class Order(models.Model):
         else:
             return self.product.price * self.count
 
+    def __str__(self):
+        return f"{self.product.name} - {self.count} - {self.option.name}"
+
 
 class Delivery(models.Model):
     name = models.CharField(max_length=160)

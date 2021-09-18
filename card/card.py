@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+
 from account.users import BaseUserModel
 from shopify_first_try.utils import IsId, getObject
 from store.errors import handleError
@@ -7,6 +9,8 @@ from store.market_manager import BaseMarketObjectManager
 from store.product import Option
 from .models import Order as OrderModel, Card as CardModel, AdditionalOption as AdditionalOptionModel, \
     Delivery as DeliveryModel
+
+User = get_user_model()
 
 
 class Card:
@@ -62,6 +66,11 @@ class Card:
     @staticmethod
     def isStatusValid(status):
         return True if 0 <= status <= 4 else False
+
+    @handleError(targetObject)
+    def selectByUser(self, user):
+        user_to_select_with = getObject(User, user)
+        return self.targetObject.objects.filter(user=user_to_select_with)
 
 
 class Order:
@@ -130,4 +139,3 @@ class Delivery(BaseMarketObjectManager):
         newly_added_delivery = self.targetObject(name=name, price=price)
         newly_added_delivery.save()
         return newly_added_delivery
-
