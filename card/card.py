@@ -19,14 +19,13 @@ class Card:
 
     def addNew(self, user, delivery, receive_time, address_to_send_good, discount=None, additional_option=None,
                address_to_send_invoice=None,
-               payment_info=None, status=0, *args, **kwargs):
+               payment_info=None, *args, **kwargs):
         card_structured_data = CardDataStructure(user=user, discount=discount, additional_option=additional_option,
                                                  delivery=delivery,
                                                  receive_time=receive_time,
                                                  address_to_send_good=address_to_send_good,
                                                  address_to_send_invoice=address_to_send_invoice,
-                                                 payment_info=payment_info,
-                                                 status=status)
+                                                 payment_info=payment_info)
         newly_added_card = self.targetObject(**card_structured_data.__dict__)
         newly_added_card.save()
         return newly_added_card
@@ -105,7 +104,7 @@ class OrderDataStructure:
 class CardDataStructure:
     def __init__(self, user, additional_option, delivery, receive_time, address_to_send_good, discount=None,
                  address_to_send_invoice=None,
-                 payment_info=None, status=0, *args, **kwargs):
+                 payment_info=None, *args, **kwargs):
         discount_object = Discount()
         additional_option_object = AdditionalOption()
         delivery_object = Delivery()
@@ -119,11 +118,16 @@ class CardDataStructure:
         else:
             self.user = user
 
-        self.discount = getObject(discount_object, discount)
+        discount_instance = getObject(discount_object, discount)
+        if discount_instance.is_valid(self.user):
+            self.discount = discount_instance
+        else:
+            self.discount = None
+
         self.additional_option = getObject(additional_option_object, additional_option)
         self.delivery = getObject(delivery_object, delivery)
         self.receive_time = receive_time
-        self.status = status
+
         if isinstance(address_to_send_good, dict):
             newly_added_address = Address().addNew(user=self.user, **address_to_send_good)
             self.address_to_send_good = newly_added_address

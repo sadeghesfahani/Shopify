@@ -26,7 +26,10 @@ class Order(models.Model):
             return self.product.price * self.count
 
     def __str__(self):
-        return f"{self.product.name} - {self.count} - {self.option.name}"
+        if self.option is not None:
+            return f"{self.product.name} - {self.count} - {self.option.name}"
+        else:
+            return f"{self.product.name} - {self.count}"
 
 
 class Delivery(models.Model):

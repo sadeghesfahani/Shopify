@@ -49,7 +49,7 @@ class Discount(models.Model):
         return True if self.limits > 0 else False
 
     def isUserAllowed(self, user):
-        return True if user in self.users else False
+        return True if user in self.users.all() else False
 
     def isTimeLeft(self):
         return True if date.today() < self.expire else False
