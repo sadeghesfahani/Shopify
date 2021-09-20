@@ -1,69 +1,8 @@
 import React, {Component} from 'react';
-import {Link,BrowserRouter as Router} from "react-router-dom";
+import {Link, BrowserRouter as Router} from "react-router-dom";
 
 class Navbar extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {menuMap: {}}
-    }
 
-    compileSubMenu(parent_id) {
-        for (let subMenu of this.props.menu) {
-            if (subMenu.parent === parent_id) {
-                return
-            }
-        }
-    }
-
-    mapMenu() {
-        const menuMap = {...this.state.menuMap}
-        for (let menu of this.props.menu) {
-            if (menu.parent == null) {
-                menuMap[menu.id] = []
-            } else {
-                menuMap[menu.parent.id].push(menu.id)
-            }
-        }
-        this.setState({menuMap: menuMap})
-    }
-
-    hasChildren(menu) {
-        return this.state.menuMap[menu.id] !== undefined && this.state.menuMap[menu.id].length !==0
-    }
-
-    compileMenu(menu, index) {
-        if (menu.parent == null) {
-            if (this.hasChildren(menu)) {
-                return (
-                    <li key={index} className="nav-item dropdown">
-                        <i className="dropdown-toggle d-inline-block position-relative float-right align-self-center" style={{"lineHeight":"45px"}} id={menu.name} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
-                        <Link className="nav-link d-inline-block position-relative " to={`/category/${menu.id}`} id={menu.name} >
-                            {menu.name}
-                        </Link>
-                        <div className="dropdown-menu" aria-labelledby={menu.name}>
-                            {this.state.menuMap[menu.id].map((subMenu,subIndex)=>{
-                                return <Link key={subIndex} className="dropdown-item" to={`/category/${this.getSubMenu(subMenu,'id')}`}>{this.getSubMenu(subMenu,'name')}</Link>
-                            })}
-                        </div>
-                    </li>
-                )
-            } else {
-                return (
-                        <li key={index} className="nav-item active">
-                            <Link className="nav-link" to={`/category/${menu.id}`}>{menu.name} <span className="sr-only"/></Link>
-                        </li>
-                )
-            }
-
-        }
-    }
-
-    getSubMenu(subMenu,type){
-        for (let menu of this.props.menu){
-            if (menu.id===subMenu && type === 'name') return menu.name
-            if (menu.id===subMenu && type === 'id') return menu.id
-        }
-    }
     render() {
         if (this.props.menu.length === 0) return null
         return (
@@ -92,7 +31,34 @@ class Navbar extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.menu.length === 0 || (prevProps.menu !== [] && prevProps.menu === this.props.menu)) return null
-        this.mapMenu()
+
+    }
+
+    compileMenu(menu, index) {
+        console.log(this.props.submenu)
+        if (this.props.submenu[menu.id]!== undefined && this.props.submenu[menu.id].length > 0 ) {
+            return (
+                <li key={index} className="nav-item dropdown">
+                    <a className="nav-link dropdown-toggle" href="#" id={`navbarDropdown${index}`} role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {menu.name}
+                    </a>
+                    <div className="dropdown-menu" aria-labelledby={`navbarDropdown${index}`}>
+                        {console.log(this.props.submenu[menu.id].length)}
+                        {this.props.submenu[menu.id].map((submenu, index) => {
+                            return <Link key={index} className="dropdown-item" to="#">{submenu.name}</Link>
+                        })}
+
+                    </div>
+                </li>
+            )
+        } else {
+            return (
+                <li key={index} className="nav-item">
+                    <Link className="nav-link" to="#">{menu.name}</Link>
+                </li>
+            )
+        }
     }
 }
 

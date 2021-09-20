@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-+$d*(7f4d6f&@80-$-f#!*kd3@ta_s(+8wnwgyojy25jyy%8f+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -106,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
@@ -137,8 +136,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'account.User'
 BASE_URL = 'http://127.0.0.1:8000'
 # AUTHENTICATION_BACKENDS = ['shopify_first_try.auth.CustomBackend']
-
-ALLOWED_HOSTS = ['*']
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+# ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = True
 MEGA_STORE_ID = 1
