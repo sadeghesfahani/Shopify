@@ -50,7 +50,7 @@ class AdditionalOption(models.Model):
 class Card(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     orders = models.ManyToManyField(Order, blank=True)
-    discount = models.ForeignKey(Discount, on_delete=models.PROTECT)
+    discount = models.ForeignKey(Discount, on_delete=models.PROTECT,blank=True,null=True)
     additional_option = models.ForeignKey(AdditionalOption, models.PROTECT, blank=True, null=True)
     delivery = models.ForeignKey(Delivery, on_delete=models.PROTECT)
     WAITING_FOR_PAYMENT = 0

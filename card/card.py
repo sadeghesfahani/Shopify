@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 
+from account.models import Address as AddressModel
 from account.users import BaseUserModel
 from shopify_first_try.utils import IsId, getObject
 from store.errors import handleError
@@ -16,14 +17,14 @@ User = get_user_model()
 class Card:
     targetObject = CardModel
 
-    def addNew(self, user, delivery, receive_time, address_good, discount=None, additional_option=None,
-               address_invoice=None,
-               payment_info=None, status=0):
+    def addNew(self, user, delivery, receive_time, address_to_send_good, discount=None, additional_option=None,
+               address_to_send_invoice=None,
+               payment_info=None, status=0, *args, **kwargs):
         card_structured_data = CardDataStructure(user=user, discount=discount, additional_option=additional_option,
                                                  delivery=delivery,
                                                  receive_time=receive_time,
-                                                 address_good=address_good,
-                                                 address_invoice=address_invoice,
+                                                 address_to_send_good=address_to_send_good,
+                                                 address_to_send_invoice=address_to_send_invoice,
                                                  payment_info=payment_info,
                                                  status=status)
         newly_added_card = self.targetObject(**card_structured_data.__dict__)
@@ -97,8 +98,9 @@ class OrderDataStructure:
 
 
 class CardDataStructure:
-    def __init__(self, user, discount, additional_option, delivery, receive_time, address_good, address_invoice=None,
-                 payment_info=None, status=0):
+    def __init__(self, user, additional_option, delivery, receive_time, address_to_send_good,discount =None,
+                 address_to_send_invoice=None,
+                 payment_info=None, status=0, *args, **kwargs):
         discount_object = Discount()
         additional_option_object = AdditionalOption()
         delivery_object = Delivery()
@@ -117,8 +119,8 @@ class CardDataStructure:
         self.delivery = getObject(delivery_object, delivery)
         self.receive_time = receive_time
         self.status = status
-        self.address_to_send_good = address_good
-        self.address_to_send_invoice = address_invoice
+        self.address_to_send_good = getObject(Address(), address_to_send_good)
+        self.address_to_send_invoice = getObject(Address(), address_to_send_invoice)
         self.payment_info = payment_info
 
 
@@ -139,3 +141,7 @@ class Delivery(BaseMarketObjectManager):
         newly_added_delivery = self.targetObject(name=name, price=price)
         newly_added_delivery.save()
         return newly_added_delivery
+
+
+class Address(BaseMarketObjectManager):
+    targetObject = AddressModel
