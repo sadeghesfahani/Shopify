@@ -32,7 +32,7 @@ class TestCard(TestBase):
                                          datetime.datetime.now() + datetime.timedelta(days=7, hours=0, minutes=0,
                                                                                       seconds=0))
         card = self.card_object.addNew(self.customer['user'], delivery=delivery1, receive_time=datetime.datetime.now(),
-                                       address_good=address1, address_invoice=address2, discount=discount1,
+                                       address_to_send_good=address1, address_to_send_invoice=address2, discount=discount1,
                                        additional_option=option)
         self.card_object.addOrderToCard(card, order1)
         self.card_object.addOrderToCard(card, order2)
@@ -41,7 +41,7 @@ class TestCard(TestBase):
 
         option = self.additional_option_object.addNew('arzesh afzude', 'baraye sherkat ha', 1, 5000)
         card = self.card_object.addNew(self.customer['user'], delivery=delivery1, receive_time=datetime.datetime.now(),
-                                       address_good=address1, address_invoice=address2, discount=discount1,
+                                       address_to_send_good=address1, address_to_send_invoice=address2, discount=discount1,
                                        additional_option=option)
         self.card_object.addOrderToCard(card, order1)
         self.card_object.addOrderToCard(card, order2)
@@ -56,7 +56,7 @@ class TestCard(TestBase):
         order4 = self.order_object.addNew(self.product_1, 5, self.option_product)
 
         card1 = self.card_object.addNew(self.customer['user'], delivery=delivery1, receive_time=datetime.datetime.now(),
-                                       address_good=address1, address_invoice=address2, discount=discount1,
+                                       address_to_send_good=address1, address_to_send_invoice=address2, discount=discount1,
                                        additional_option=option)
         self.card_object.addOrderToCard(card1, order1)
         self.card_object.addOrderToCard(card1, order2)
@@ -68,7 +68,7 @@ class TestCard(TestBase):
         self.option_product1 = Option().addNewOption(self.product_attribute.id, option2)
         order5 = self.order_object.addNew(self.product_1, 5, self.option_product1)
         card2 = self.card_object.addNew(self.customer['user'], delivery=delivery1, receive_time=datetime.datetime.now(),
-                                       address_good=address1, address_invoice=address2, discount=discount1,
+                                       address_to_send_good=address1, address_to_send_invoice=address2, discount=discount1,
                                        additional_option=option)
 
         self.card_object.addOrderToCard(card2, order1)
@@ -83,7 +83,7 @@ class TestCard(TestBase):
         self.option_product2 = Option().addNewOption(self.product_attribute.id, option3)
         order6 = self.order_object.addNew(self.product_1, 5, self.option_product2)
         card3 = self.card_object.addNew(self.customer['user'], delivery=delivery1, receive_time=datetime.datetime.now(),
-                                        address_good=address1, address_invoice=address2, discount=discount1,
+                                        address_to_send_good=address1, address_to_send_invoice=address2, discount=discount1,
                                         additional_option=option)
 
         self.card_object.addOrderToCard(card3, order1)
