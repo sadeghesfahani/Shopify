@@ -31,17 +31,21 @@ class Card:
         newly_added_card.save()
         return newly_added_card
 
+    @handleError(targetObject)
     def addOrderToCard(self, card, orders):
-        if IsId(card):
-            card_object = self.selectById(card)
-        else:
-            card_object = card
+        card_object = getObject(self.targetObject, card)
         if isinstance(orders, list):
             for order in orders:
-                order_to_add = getObject(Order(), order)
+                if isinstance(order, dict):
+                    order_to_add = Order().addNew(**order)
+                else:
+                    order_to_add = getObject(Order(), order)
                 card_object.orders.add(order_to_add)
         else:
-            order_to_add = getObject(Order(), orders)
+            if isinstance(orders, dict):
+                order_to_add = Order().addNew(**orders)
+            else:
+                order_to_add = getObject(Order(), orders)
             card_object.orders.add(order_to_add)
         card_object.save()
 
@@ -81,6 +85,7 @@ class Order:
     def selectById(self, order_id):
         return self.targetObject.objects.get(pk=order_id)
 
+    @handleError(targetObject)
     def addNew(self, product, quantity, product_option=None):
         order_structured_data = OrderDataStructure(product, product_option, quantity)
         newly_added_order = self.targetObject(**order_structured_data.__dict__)
@@ -98,7 +103,7 @@ class OrderDataStructure:
 
 
 class CardDataStructure:
-    def __init__(self, user, additional_option, delivery, receive_time, address_to_send_good,discount =None,
+    def __init__(self, user, additional_option, delivery, receive_time, address_to_send_good, discount=None,
                  address_to_send_invoice=None,
                  payment_info=None, status=0, *args, **kwargs):
         discount_object = Discount()

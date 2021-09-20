@@ -24,11 +24,9 @@ class CardAPI(viewsets.ViewSet, generics.GenericAPIView):
         return Response(self.get_serializer_class()(card_object.selectByUser(request.user), many=True).data)
 
     def create(self, request):
-        print(request.data)
         newly_added_card = self.card.addNew(user=request.user, **request.data)
-        for order in request.data['orders']:
-            self.card.addOrderToCard(newly_added_card, order)
-        return Response(self.get_serializer_class()(newly_added_card,many= False).data)
+        self.card.addOrderToCard(newly_added_card, request.data["orders"])
+        return Response(self.get_serializer_class()(newly_added_card, many=False).data)
 
     @action(detail=False)
     def discount_validation(self, request):
