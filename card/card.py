@@ -124,8 +124,18 @@ class CardDataStructure:
         self.delivery = getObject(delivery_object, delivery)
         self.receive_time = receive_time
         self.status = status
-        self.address_to_send_good = getObject(Address(), address_to_send_good)
-        self.address_to_send_invoice = getObject(Address(), address_to_send_invoice)
+        if isinstance(address_to_send_good, dict):
+            newly_added_address = Address().addNew(user=self.user, **address_to_send_good)
+            self.address_to_send_good = newly_added_address
+        else:
+            self.address_to_send_good = getObject(Address(), address_to_send_good)
+
+        if isinstance(address_to_send_invoice, dict):
+            newly_added_address = Address().addNew(user=self.user, **address_to_send_invoice)
+            self.address_to_send_invoice = newly_added_address
+        else:
+            self.address_to_send_invoice = getObject(Address(), address_to_send_invoice)
+
         self.payment_info = payment_info
 
 
@@ -150,3 +160,8 @@ class Delivery(BaseMarketObjectManager):
 
 class Address(BaseMarketObjectManager):
     targetObject = AddressModel
+
+    def addNew(self, user, address, postal_code):
+        newly_added_address = self.targetObject(address=address, postal_code=postal_code, user=getObject(User, user))
+        newly_added_address.save()
+        return newly_added_address
