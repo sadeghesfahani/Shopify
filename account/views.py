@@ -45,7 +45,8 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
 
     @action(detail=False, methods=['POST'])
     def login(self, request):
-        user = BaseUserModel().getUser(request.data)
+        user_data = UserDataStructure(**request.data)
+        user = BaseUserModel().getUser(user_data)
         if user is not None:
             token = BaseUserModel().getToken(user)
             return Response({"status": True, "token": token})

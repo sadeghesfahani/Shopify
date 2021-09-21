@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './Register.css';
 import Joi from 'joi-browser'
-import {Redirect, BrowserRouter} from "react-router-dom";
+import {Redirect} from "react-router-dom";
 
 
 class Register extends Component {
@@ -51,6 +51,7 @@ class Register extends Component {
                         localStorage.setItem('isUserLoggedIn', '1')
                         const state = {...this.state}
                         state['redirect'] = true
+                        this.props.handleStatus(true)
                         this.setState(state)
                     }
                 }
@@ -68,17 +69,15 @@ class Register extends Component {
             }
         }
         const result = await fetch("http://127.0.0.1:8000/account/auth/", option)
-        const response = await result.json()
-        return response
+        return await result.json()
     }
 
     prepareData = () => {
         const {account} = this.state
-        const data = JSON.stringify({
+        return JSON.stringify({
             email: account.email,
             password: account.password
         })
-        return data
     }
     validate = () => {
         const result = Joi.validate(this.state.account, this.schema, {abortEarly: false});

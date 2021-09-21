@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 import Category from "./components/category";
 import Register from "./components/Register";
+import Login from "./components/Login";
 
 class App extends Component {
     constructor(props) {
@@ -11,11 +12,15 @@ class App extends Component {
         this.state = {
             menu: [],
             submenu: [],
-            user: null
+            user: null,
+            loggedIn: false
         }
         this.getMenu()
     }
 
+    setStatus = (loginStatus) => {
+        this.setState({loggedIn: loginStatus})
+    }
 
     async getMenu() {
         await fetch('http://127.0.0.1:8000/category/roots/').then(response => response.json()).then(roots => this.generateMenuTree(roots))
@@ -36,14 +41,18 @@ class App extends Component {
     }
 
     render() {
+
         return (
 
             <Router>
                 <div>
-                    <Navbar menu={this.state.menu} submenu={this.state.submenu}/>
+                    <Navbar menu={this.state.menu} submenu={this.state.submenu} loggedIn={this.state.loggedIn} handleStatus={this.setStatus}/>
                     <Switch>
                         <Route path="/register">
-                            <Register/>
+                            <Register handleStatus={this.setStatus}/>
+                        </Route>
+                        <Route path="/login">
+                            <Login handleStatus={this.setStatus}/>
                         </Route>
                     </Switch>
                 </div>
@@ -55,6 +64,9 @@ class App extends Component {
     componentDidMount() {
         const user = localStorage.getItem('user')
         this.setState({user: user})
+        if (localStorage.getItem('isUserLoggedIn') ==="1"){
+            this.setState({loggedIn:true})
+        }
     }
 }
 

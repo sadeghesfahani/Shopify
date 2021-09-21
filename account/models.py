@@ -57,7 +57,7 @@ class User(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.first_name
+        return self.email
 
     def save(self, *args, **kwargs):
         if self.user_type == User.ADMIN:

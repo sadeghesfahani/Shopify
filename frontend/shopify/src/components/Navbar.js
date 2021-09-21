@@ -3,7 +3,25 @@ import {Link, BrowserRouter as Router} from "react-router-dom";
 
 class Navbar extends Component {
 
+    constructor(props) {
+        super(props);
+        this.logUserOut = this.logUserOut.bind(this)
+    }
+
+
+    logUserOut() {
+        localStorage.removeItem('user')
+        localStorage.setItem('isUserLoggedIn', "0")
+        this.props.handleStatus(false)
+    }
+
+
+
     render() {
+        if (localStorage.getItem('isUserLoggedIn') === "1") {
+
+
+        }
         if (this.props.menu.length === 0) return null
         return (
             <nav className='navbar navbar-expand-lg navbar-light bg-light'>
@@ -64,7 +82,7 @@ class Navbar extends Component {
     }
 
     generateAccount() {
-        if (localStorage.getItem('user')){
+        if (this.props.loggedIn) {
             return (
                 <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" href="#" id='navbarDropdown-account' role="button"
@@ -73,11 +91,11 @@ class Navbar extends Component {
                     </a>
                     <div className="dropdown-menu" aria-labelledby='navbarDropdown-account'>
                         <Link to="#" className="dropdown-item">اطلاعات کاربری</Link>
-                        <Link to="#" className="dropdown-item">خروج</Link>
+                        <Link to="#" onClick={this.logUserOut} className="dropdown-item">خروج</Link>
                     </div>
                 </li>
             )
-        }else{
+        } else {
             return (
                 <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" href="#" id='navbarDropdown-account' role="button"
@@ -85,7 +103,7 @@ class Navbar extends Component {
                         ناحیه کاربری
                     </a>
                     <div className="dropdown-menu" aria-labelledby='navbarDropdown-account'>
-                        <Link to="#" className="dropdown-item">ورود</Link>
+                        <Link to="login" className="dropdown-item">ورود</Link>
                         <Link to="register" className="dropdown-item">ثبت نام</Link>
                     </div>
                 </li>
