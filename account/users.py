@@ -73,3 +73,10 @@ class BaseUserModel:
         newly_added_address = Address(user=user_object, address=address, postal_code=postal_code)
         newly_added_address.save()
         return newly_added_address
+
+
+    def getUserByEmail(self, email):
+        try:
+            return User.objects.get(username=email)
+        except User.DoesNotExist:
+            return False

@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView
 from django.views.generic.base import TemplateView
 from rest_framework import viewsets, generics
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
@@ -18,6 +19,7 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
     queryset = get_user_model()
 
     def create(self, request):
+        print(request.data)
         structured_user_data = UserDataStructure(**request.data)
         user = BaseUserModel(request).register(structured_user_data)
         BaseUserModel(request).logUserInByInstance(user)
@@ -33,6 +35,14 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
         else:
             raise PermissionDenied('You are not allowed to see others profile information')
 
+    @action(detail=False)
+    def is_user_exist(self, request):
+        email = request.GET.get('email')
+        print(email)
+        if email is not None:
+            if BaseUserModel().getUserByEmail(email):
+                return Response({'exists': True})
+        return Response({'exists': False})
 # class AjaxMixin(FormView):
 #     def get_form_kwargs(self):
 #         kwargs = {

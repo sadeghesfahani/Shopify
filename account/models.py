@@ -40,8 +40,8 @@ class User(AbstractUser):
     ADMIN = 1
     DEPARTMENT_ADMIN = 2
     MAIN_DEPARTMENT = 3
-    first_name = models.CharField(max_length=60)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=60,null=True, blank=True)
+    last_name = models.CharField(max_length=100,null=True, blank=True)
     avatar = models.ImageField(null=True, blank=True)
     last_login = models.DateTimeField(auto_now=True)
     email = models.EmailField(max_length=255, unique=True)
