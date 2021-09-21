@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import './Register.css';
 import Joi from 'joi-browser'
-import { Redirect } from "react-router-dom";
+import {Redirect, BrowserRouter} from "react-router-dom";
+
 
 class Register extends Component {
     constructor(props) {
@@ -9,16 +10,18 @@ class Register extends Component {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this)
         this.register = this.register.bind(this)
-        this.state = {
-            account: {
-                email: "",
-                password: "",
-                re_password: ""
-            },
-            errors: {}
-        }
+
     }
 
+    state = {
+        account: {
+            email: "",
+            password: "",
+            re_password: ""
+        },
+        errors: {},
+        redirect: false
+    }
     schema = {
         email: Joi.string().email().required(),
         password: Joi.string().min(5).required(),
@@ -46,6 +49,9 @@ class Register extends Component {
                     if (response.token !== undefined) {
                         localStorage.setItem('user', response.token)
                         localStorage.setItem('isUserLoggedIn', '1')
+                        const state = {...this.state}
+                        state['redirect'] = true
+                        this.setState(state)
                     }
                 }
             }
@@ -85,14 +91,24 @@ class Register extends Component {
         this.setState(state)
     }
 
+    redirectToHome() {
+        return <Redirect to='/'/>
+    }
+
+
+
+
     render() {
         const {account} = this.state
-        if (localStorage.getItem('isUserLoggedIn') === '1'){
-            console.log('loged')
-            // <Redirect to='/' />
+        if (localStorage.getItem('isUserLoggedIn') ==="1"){
+            const state = {...this.state}
+            state['redirect'] = true
+            this.setState(state)
         }
         return (
+
             <div className='card w-50 text-right mx-auto mt-3'>
+                {this.state.redirect && this.redirectToHome()}
                 <div className='card-header'>
                     ثبت نام
                 </div>

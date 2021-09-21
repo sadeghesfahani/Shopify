@@ -19,7 +19,6 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
     queryset = get_user_model()
 
     def create(self, request):
-        print(request.data)
         structured_user_data = UserDataStructure(**request.data)
         user = BaseUserModel(request).register(structured_user_data)
         BaseUserModel(request).logUserInByInstance(user)
@@ -43,6 +42,16 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
             if BaseUserModel().getUserByEmail(email):
                 return Response({'exists': True})
         return Response({'exists': False})
+
+    @action(detail=False, methods=['POST'])
+    def login(self, request):
+        user = BaseUserModel().getUser(request.data)
+        if user is not None:
+            token = BaseUserModel().getToken(user)
+            return Response({"status": True, "token": token})
+        else:
+            return Response({"Status": False})
+
 # class AjaxMixin(FormView):
 #     def get_form_kwargs(self):
 #         kwargs = {
