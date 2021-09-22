@@ -55,7 +55,6 @@ class Navbar extends Component {
     }
 
     compileMenu(menu, index) {
-        console.log(this.props.submenu)
         if (this.props.submenu[menu.id] !== undefined && this.props.submenu[menu.id].length > 0) {
             return (
                 <li key={index} className="nav-item dropdown">
@@ -64,9 +63,8 @@ class Navbar extends Component {
                         {menu.name}
                     </a>
                     <div className="dropdown-menu" aria-labelledby={`navbarDropdown${index}`}>
-                        {console.log(this.props.submenu[menu.id].length)}
                         {this.props.submenu[menu.id].map((submenu, index) => {
-                            return <Link key={index} className="dropdown-item" to="#">{submenu.name}</Link>
+                            return <Link key={index} className="dropdown-item" to={`/category/${submenu.id}`}>{submenu.name}</Link>
                         })}
 
                     </div>
@@ -75,7 +73,7 @@ class Navbar extends Component {
         } else {
             return (
                 <li key={index} className="nav-item">
-                    <Link className="nav-link" to="#">{menu.name}</Link>
+                    <Link className="nav-link" to={`/category/${menu.id}`} >{menu.name}</Link>
                 </li>
             )
         }

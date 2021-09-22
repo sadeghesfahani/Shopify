@@ -47,68 +47,14 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
     def login(self, request):
         user_data = UserDataStructure(**request.data)
         user = BaseUserModel().getUser(user_data)
+        if user.is_admin:
+            user_permission = 'admin'
+        elif user.is_department_admin:
+            user_permission = 'store_admin'
+        else:
+            user_permission = 'customer'
         if user is not None:
             token = BaseUserModel().getToken(user)
-            return Response({"status": True, "token": token})
+            return Response({"status": True, "token": token, "user_permission": user_permission})
         else:
             return Response({"Status": False})
-
-# class AjaxMixin(FormView):
-#     def get_form_kwargs(self):
-#         kwargs = {
-#             'initial': self.get_initial(),
-#             'prefix': self.get_prefix(),
-#         }
-#
-#         if self.request.method in ('POST', 'PUT'):
-#             kwargs.update({
-#                 'data': json.loads(self.request.body.decode("utf-8")),
-#                 'files': self.request.FILES,
-#             })
-#
-#         return kwargs
-#
-#
-# class AuthenticationView(AjaxMixin, FormView):
-#     form_class = RegisterForm
-#     template_name = 'index.html'
-#     def form_valid(self, form):
-#         try:
-#             self.authenticateUser(form)
-#             return JsonResponse({'server_response': 'succeed'})
-#         except:
-#             return JsonResponse({'server_response': 'fail'})
-#
-#     def authenticateUser(self, form):
-#         user = UserDataStructure(**form.data)
-#         if form.data.get('action') == 'login':
-#             self.logUserIn(user)
-#         else:
-#             login(self.request, self.registerUser(user))
-#
-#     def logUserIn(self, user):
-#         BaseUserModel(self.request).logUserIn(user)
-#
-#     def registerUser(self, user):
-#         return BaseUserModel(self.request).register(user)
-#
-#     def form_invalid(self, form):
-#         return JsonResponse({'server_response': 'fail'})
-#
-#
-# def CheckUsernameExistence(request):
-#     data = request.GET
-#     return JsonResponse({'server_response': 'exist'}) if User.objects.filter(
-#         username=data['email']).count() != 0 else JsonResponse({'server_response': 'free'})
-#
-#
-# class GeneralInfo(TemplateView):
-#     def get(self, request, *args, **kwargs):
-#         return JsonResponse(self.loadData())
-#
-#     @staticmethod
-#     def loadData():
-#         data = {"authentication": settings.BASE_URL + reverse_lazy('account:authentication'),
-#                 'checkuserexistance': settings.BASE_URL + reverse_lazy('account:checkuserexistance')
-#                 }
-#         return data

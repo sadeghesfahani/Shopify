@@ -30,6 +30,11 @@ class Login extends Component {
         if (result['status']) {
             localStorage.setItem('user', result['token'])
             localStorage.setItem('isUserLoggedIn', "1")
+            localStorage.setItem('user_permission',result['user_permission'])
+
+            console.log("result")
+            console.log(result)
+            this.props.set_user_permission(result['user_permission'])
             this.props.handleStatus(true)
             this.setState({redirect: true})
 

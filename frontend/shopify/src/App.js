@@ -2,7 +2,7 @@ import './App.css';
 import Navbar from "./components/Navbar";
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
-import Category from "./components/category";
+import Category from "./components/Category";
 import Register from "./components/Register";
 import Login from "./components/Login";
 
@@ -13,7 +13,8 @@ class App extends Component {
             menu: [],
             submenu: [],
             user: null,
-            loggedIn: false
+            loggedIn: false,
+            user_permission: ""
         }
         this.getMenu()
     }
@@ -40,19 +41,26 @@ class App extends Component {
         this.setState({submenu: menu})
     }
 
+    set_user_permission = (user_permission) =>{
+        this.setState({user_permission:user_permission})
+    }
     render() {
 
         return (
 
             <Router>
                 <div>
-                    <Navbar menu={this.state.menu} submenu={this.state.submenu} loggedIn={this.state.loggedIn} handleStatus={this.setStatus}/>
+                    <Navbar menu={this.state.menu} submenu={this.state.submenu} loggedIn={this.state.loggedIn}
+                            handleStatus={this.setStatus} user_permission={this.state.user_permission}/>
                     <Switch>
                         <Route path="/register">
-                            <Register handleStatus={this.setStatus}/>
+                            <Register handleStatus={this.setStatus} set_user_permission={this.set_user_permission}/>
                         </Route>
                         <Route path="/login">
-                            <Login handleStatus={this.setStatus}/>
+                            <Login handleStatus={this.setStatus} set_user_permission={this.set_user_permission}/>
+                        </Route>
+                        <Route path="/category/:id">
+                            <Category/>
                         </Route>
                     </Switch>
                 </div>
@@ -64,8 +72,11 @@ class App extends Component {
     componentDidMount() {
         const user = localStorage.getItem('user')
         this.setState({user: user})
-        if (localStorage.getItem('isUserLoggedIn') ==="1"){
-            this.setState({loggedIn:true})
+        if (localStorage.getItem('isUserLoggedIn') === "1") {
+            this.setState({loggedIn: true})
+        }
+        if (localStorage.getItem('user_permission') !== undefined) {
+            this.setState({user_permission: localStorage.getItem('user_permission')})
         }
     }
 }

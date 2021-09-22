@@ -20,7 +20,8 @@ class Register extends Component {
             re_password: ""
         },
         errors: {},
-        redirect: false
+        redirect: false,
+        is_admin: false
     }
     schema = {
         email: Joi.string().email().required(),
@@ -52,6 +53,14 @@ class Register extends Component {
                         const state = {...this.state}
                         state['redirect'] = true
                         this.props.handleStatus(true)
+                        if(this.state.is_admin === true){
+                            localStorage.setItem('user_permission','store_admin')
+                            this.props.set_user_permission('store_admin')
+                        }else {
+                            localStorage.setItem('user_permission','customer')
+                            this.props.set_user_permission('customer')
+                        }
+
                         this.setState(state)
                     }
                 }
@@ -76,7 +85,8 @@ class Register extends Component {
         const {account} = this.state
         return JSON.stringify({
             email: account.email,
-            password: account.password
+            password: account.password,
+            user_type : this.state.is_admin ? 2 : 0
         })
     }
     validate = () => {
@@ -94,12 +104,14 @@ class Register extends Component {
         return <Redirect to='/'/>
     }
 
-
+    handleClick = () => {
+        this.setState({is_admin: !this.state.is_admin})
+    }
 
 
     render() {
         const {account} = this.state
-        if (localStorage.getItem('isUserLoggedIn') ==="1"){
+        if (localStorage.getItem('isUserLoggedIn') === "1") {
             const state = {...this.state}
             state['redirect'] = true
             this.setState(state)
@@ -124,8 +136,12 @@ class Register extends Component {
                             <input onChange={this.handleChange} value={account.re_password} type='password'
                                    className='form-control'
                                    id='re_password'/>
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <label htmlFor="admin">به عنوان فروشنده</label>
+                            <input defaultChecked={this.state.is_admin} onClick={this.handleClick} type="checkbox"
+                                   name='admin' id='admin'/>
+
                         </div>
+                        <button type="submit" className="btn btn-primary">Submit</button>
                     </form>
 
                 </div>
