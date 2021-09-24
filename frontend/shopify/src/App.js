@@ -41,17 +41,19 @@ class App extends Component {
         this.setState({submenu: menu})
     }
 
-    set_user_permission = (user_permission) =>{
-        this.setState({user_permission:user_permission})
+    set_user_permission = (user_permission) => {
+        this.setState({user_permission: user_permission})
     }
+
     render() {
 
         return (
 
             <Router>
-                <div>
-                    <Navbar menu={this.state.menu} submenu={this.state.submenu} loggedIn={this.state.loggedIn}
-                            handleStatus={this.setStatus} user_permission={this.state.user_permission}/>
+
+                <Navbar menu={this.state.menu} submenu={this.state.submenu} loggedIn={this.state.loggedIn}
+                        handleStatus={this.setStatus} user_permission={this.state.user_permission}/>
+                <div className='container-fluid'>
                     <Switch>
                         <Route path="/register">
                             <Register handleStatus={this.setStatus} set_user_permission={this.set_user_permission}/>

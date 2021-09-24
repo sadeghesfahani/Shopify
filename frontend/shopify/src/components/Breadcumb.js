@@ -8,14 +8,15 @@ class Breadcumb extends Component {
         return "breadcrumb-item"
     }
     render() {
+
         return (
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb">
                     {/*<li className="breadcrumb-item"><a href="#">Home</a></li>*/}
                     {/*<li className="breadcrumb-item active" aria-current="page">Library</li>*/}
-                    {this.props.list.map((Bread,index)=>{
+                    {this.props.parents.map((category,index)=>{
                         return(
-                            <li key={index} className={this.generateClass(index)}><Link to={Bread[1]}>{Bread[0]}</Link></li>
+                            <li key={index} className='breadcrumb-item'><Link to={`/category/${category.id}`}>{category.name}</Link></li>
                         )
                     })}
                 </ol>

@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import {withRouter} from "react-router-dom"
+import Product from "./Product";
+import Breadcumb from "./Breadcumb";
+import Subcategory from "./Subcategory";
 
 class Category extends Component {
     constructor(props) {
@@ -17,7 +20,7 @@ class Category extends Component {
     }
 
     async get_category() {
-        const parents_raw = await fetch(`http://127.0.0.1:8000/category/${this.props.match.params.id}/all_parents/`)
+        const parents_raw = await fetch(`http://127.0.0.1:8000/category/${this.props.match.params.id}/all_parents/?self`)
         const parents = await parents_raw.json()
         const state_parent = []
         for (let parent of parents) {
@@ -69,18 +72,29 @@ class Category extends Component {
     render() {
         // this.call_server()
         return (
-            <div>
+            <>
+                <div className='not-rtl'>
+                    <Breadcumb parents={this.state.parent_category}/>
+                </div>
                 {/* eslint-disable-next-line array-callback-return */}
-                {this.state.products.map((product,index)=>{
-                    return(
-                        <div>
-                        <h1>{product.name}</h1>
-                        <img src={`http://127.0.0.1:8000${product.image}`}/>
-                        </div>
+                <div className='row'>
+                    <div className='col-12 col-md-3 '>
+                        <Subcategory subcategories={this.state.children_category}/>
+                    </div>
+                    <div className='col'>
+                    {this.state.products.map((product, index) => {
+                        return (
+                            <>
+                                <Product key={index} name={product.name}
+                                         image={`http://127.0.0.1:8000${product.image}`}
+                                         price={product.price}
+                                         product_id={product.id}/>
+                            </>
                         )
-
-                })}
-            </div>
+                    })}
+                    </div>
+                </div>
+            </>
         );
     }
 }
