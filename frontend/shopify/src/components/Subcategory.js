@@ -8,7 +8,7 @@ class Subcategory extends Component {
                 <ul className="list-group p-0 m-0">
                     {this.props.subcategories.map((category,index)=>{
                         return(
-                            <Link to={`/category/${category.id}`} ><li key={index} className="list-group-item">{category.name}</li></Link>
+                            <Link key={index} to={`/category/${category.id}`} className='list-group-item list-group-item-action' >{category.name}</Link>
                         )
                     })}
                 </ul>
