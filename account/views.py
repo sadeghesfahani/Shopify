@@ -37,7 +37,6 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
     @action(detail=False)
     def is_user_exist(self, request):
         email = request.GET.get('email')
-        print(email)
         if email is not None:
             if BaseUserModel().getUserByEmail(email):
                 return Response({'exists': True})
