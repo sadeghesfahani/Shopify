@@ -70,7 +70,16 @@ class Category extends Component {
         // this.call_server()
         return (
             <div>
-                {/*{this.call_server()}*/}
+                {/* eslint-disable-next-line array-callback-return */}
+                {this.state.products.map((product,index)=>{
+                    return(
+                        <div>
+                        <h1>{product.name}</h1>
+                        <img src={`http://127.0.0.1:8000${product.image}`}/>
+                        </div>
+                        )
+
+                })}
             </div>
         );
     }
