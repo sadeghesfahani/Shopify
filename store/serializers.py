@@ -37,6 +37,8 @@ class PriceSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     attributes = AttributeSerializer(many=True)
     image = serializers.ReadOnlyField()
+    media = serializers.ReadOnlyField()
+
     class Meta:
         model = Product
         fields = '__all__'

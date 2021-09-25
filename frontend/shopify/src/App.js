@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
 import Category from "./components/Category";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import ProductPage from "./components/ProductPage";
 
 class App extends Component {
     constructor(props) {
@@ -63,6 +64,9 @@ class App extends Component {
                         </Route>
                         <Route path="/category/:id">
                             <Category/>
+                        </Route>
+                        <Route path="/product/:id">
+                            <ProductPage/>
                         </Route>
                     </Switch>
                 </div>

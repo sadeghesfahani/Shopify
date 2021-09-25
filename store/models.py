@@ -83,6 +83,10 @@ class Product(models.Model):
         return Media.objects.get(product=self, picture_type=Media.MAIN).picture.url
 
     @property
+    def media(self):
+        return Media.objects.filter(product=self, picture_type= Media.OTHER)
+
+    @property
     def attributes(self):
         attributes = Attribute.objects.filter(product_id=self.id)
         return attributes

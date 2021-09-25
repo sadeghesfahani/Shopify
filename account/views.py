@@ -1,15 +1,7 @@
-import json
-from django.http import JsonResponse
-from django.urls import reverse_lazy
-from django.views.generic import FormView
-from django.views.generic.base import TemplateView
 from rest_framework import viewsets, generics
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-
-from shopify_first_try import settings
-from account.forms import RegisterForm
 from .serializers import TokenSerializer, UserSerializerRegister, UserSerializerShow
 from .users import *
 
@@ -18,7 +10,9 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = UserSerializerRegister
     queryset = get_user_model()
 
+
     def create(self, request):
+
         structured_user_data = UserDataStructure(**request.data)
         user = BaseUserModel(request).register(structured_user_data)
         BaseUserModel(request).logUserInByInstance(user)
