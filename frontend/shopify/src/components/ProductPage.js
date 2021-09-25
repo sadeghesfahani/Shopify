@@ -32,24 +32,49 @@ class ProductPage extends Component {
         const result = await fetch(url)
         const productInfo = await result.json()
         this.setState({product: productInfo})
-        this.setState({option: this.state.product.attributes ? this.state.product.attributes[0].options[0] : false})
+        this.setState({option: this.state.product.attributes[0]!==undefined ? this.state.product.attributes[0].options[0] : false})
     }
 
     generatePrice = () => {
-        if (this.state.option){
-            if(this.state.option.type ==0){
+        if (this.state.option) {
+            if (this.state.option.type === 0) {
                 return this.state.product.price
-            }else if (this.state.option.type ==1){
+            } else if (this.state.option.type === 1) {
                 return this.state.option.price
-            }else if(this.state.option.type ==2){
+            } else if (this.state.option.type === 2) {
                 return this.state.product.price + this.state.option.price
-            } else if (this.state.option.type ==3){
-                return (1+this.state.option.price/100)*this.state.product.price
+            } else if (this.state.option.type === 3) {
+                return (1 + this.state.option.price / 100) * this.state.product.price
             }
 
-        }else {
+        } else {
             return this.state.product.price
         }
+    }
+
+    handleAddToCard = () => {
+        const card_raw = localStorage.getItem('card')
+        const card = JSON.parse(card_raw)
+        if (card !== null) {
+            let doesProductExist = false
+            for (let product of card.orders) {
+                if (product.product === this.state.product.id) {
+                    if (product.option === this.state.option.id) {
+                        doesProductExist = true
+                    }
+
+                }
+            }
+            if (!doesProductExist) {
+                card.orders.push({product: this.state.product.id, option: this.state.option.id})
+                localStorage.setItem('card', JSON.stringify(card))
+            }
+        } else {
+            const new_card = {orders: []}
+            new_card.orders.push({product: this.state.product.id, option: this.state.option.id})
+            localStorage.setItem('card', JSON.stringify(new_card))
+        }
+
     }
 
     generateInfo = () => {
@@ -69,6 +94,7 @@ class ProductPage extends Component {
                         </>
                     )
                 })}
+                <button onClick={this.handleAddToCard} className='btn btn-primary'>افزوردن به سبد خرید</button>
             </div>
         )
     }
