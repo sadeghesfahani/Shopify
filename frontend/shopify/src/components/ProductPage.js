@@ -7,8 +7,23 @@ class ProductPage extends Component {
 
         this.getProductInfo = this.getProductInfo.bind(this)
     }
+
     state = {
-        product:{}
+        product: {},
+        option: 0
+    }
+
+    handleOptionChange = (id) => {
+        const select = document.getElementById(id)
+        const value = select.options[select.selectedIndex].value
+        for (let option of this.state.product.attributes[0].options) {
+            console.log(value)
+            console.log(option)
+            if (option.id == value) {
+                this.setState({option: option})
+            }
+        }
+
     }
 
     async getProductInfo() {
@@ -16,31 +31,72 @@ class ProductPage extends Component {
         const url = `http://127.0.0.1:8000/product/${this.props.match.params.id}/`
         const result = await fetch(url)
         const productInfo = await result.json()
-        this.setState({product:productInfo})
+        this.setState({product: productInfo})
+        this.setState({option: this.state.product.attributes ? this.state.product.attributes[0].options[0] : false})
     }
 
+    generatePrice = () => {
+        if (this.state.option){
+            if(this.state.option.type ==0){
+                return this.state.product.price
+            }else if (this.state.option.type ==1){
+                return this.state.option.price
+            }else if(this.state.option.type ==2){
+                return this.state.product.price + this.state.option.price
+            } else if (this.state.option.type ==3){
+                return (1+this.state.option.price/100)*this.state.product.price
+            }
 
+        }else {
+            return this.state.product.price
+        }
+    }
 
-    generateCarousel=()=>{
+    generateInfo = () => {
+        return (
+            <div>
+                <h1>{this.state.product.name}</h1>
+                <h2>{this.generatePrice()}</h2>
+                {this.state.product.attributes && this.state.product.attributes.map((attr, index) => {
+                    return (
+                        <>
+                            <label htmlFor={attr.id}>{attr.name}</label>
+                            <select id={attr.id} onChange={() => this.handleOptionChange(attr.id)}>
+                                {attr.options && attr.options.map((opt, indexopt) => {
+                                    return <option value={opt.id} key={indexopt}>{opt.name}</option>
+                                })}
+                            </select>
+                        </>
+                    )
+                })}
+            </div>
+        )
+    }
 
-        return(
+    generateCarousel = () => {
+
+        return (
             <div id="carouselExampleIndicators" className="carousel slide" data-ride="carousel">
                 <ol className="carousel-indicators">
                     <li data-target="#carouselExampleIndicators" data-slide-to="0" className="active"/>
-                    {this.state.product.media && this.state.product.media.map((picture,index)=>{
-                        <li key={index} data-target="#carouselExampleIndicators" data-slide-to={index+1}/>
+                    {this.state.product.media && this.state.product.media.map((picture, index) => {
+                        return <li key={index} data-target="#carouselExampleIndicators" data-slide-to={index + 1}/>
                     })}
                 </ol>
                 <div className="carousel-inner">
                     <div className="carousel-item active">
-                        <img className="d-block w-100" src={`http://127.0.0.1:8000${this.state.product.image}`} alt="First slide"/>
+                        <img className="d-block w-100" src={`http://127.0.0.1:8000${this.state.product.image}`}
+                             alt="First slide"/>
                     </div>
-                    <div className="carousel-item">
-                        <img className="d-block w-100" src="..." alt="Second slide"/>
-                    </div>
-                    <div className="carousel-item">
-                        <img className="d-block w-100" src="..." alt="Third slide"/>
-                    </div>
+                    {this.state.product.media && this.state.product.media.map((picture, index) => {
+                        return (
+                            <div className="carousel-item">
+                                <img className="d-block w-100" src={`http://127.0.0.1:8000${picture}`}/>
+                            </div>
+                        )
+
+                    })}
+
                 </div>
                 <a className="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                     <span className="carousel-control-prev-icon" aria-hidden="true"/>
@@ -61,20 +117,22 @@ class ProductPage extends Component {
                     {this.generateCarousel()}
                 </div>
                 <div className='col-12 col-lg-6'>
-
+                    {this.generateInfo()}
                 </div>
             </div>
         );
     }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.match && prevProps.match.params.id !== this.props.match.params.id){
+        if (prevProps.match && prevProps.match.params.id !== this.props.match.params.id) {
             this.getProductInfo()
-        } else{
-            if (prevProps.match === undefined){
+        } else {
+            if (prevProps.match === undefined) {
                 this.getProductInfo()
             }
         }
     }
+
     componentDidMount() {
         this.getProductInfo()
     }
