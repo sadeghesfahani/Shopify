@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Link, BrowserRouter as Router} from "react-router-dom";
+import 'react-bootstrap-icons'
 
 class Navbar extends Component {
 
@@ -15,6 +16,20 @@ class Navbar extends Component {
         this.props.handleStatus(false)
     }
 
+    generateCard() {
+        return (
+            <li className="nav-item dropdown">
+                <a className="nav-link dropdown-toggle" href="#" id='card' role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i className="bi bi-cart3"/>
+                </a>
+                <div className="dropdown-menu" aria-labelledby='card'>
+                    sdjhgjk
+                    {/*<Link className="dropdown-item" to=''>something</Link>*/}
+                </div>
+            </li>
+        )
+    }
 
 
     render() {
@@ -25,6 +40,8 @@ class Navbar extends Component {
         if (this.props.menu.length === 0) return null
         return (
             <nav className='navbar navbar-expand-lg navbar-light bg-light'>
+                <link rel="stylesheet"
+                      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"/>
                 <Link className="navbar-brand" to='#'>something</Link>
                 <button className="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -38,12 +55,13 @@ class Navbar extends Component {
                             return this.compileMenu(menu, index)
                         })}
                         {this.generateAccount()}
+                        {this.generateCard()}
                     </ul>
                     <form className="form-inline my-2 my-lg-0 mr-auto">
                         <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
                         <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                     </form>
-                    <Link className='btn btn-primary' to="#">ناحیه کاربری</Link>
+
                 </div>
             </nav>
         );
@@ -64,7 +82,8 @@ class Navbar extends Component {
                     </a>
                     <div className="dropdown-menu" aria-labelledby={`navbarDropdown${index}`}>
                         {this.props.submenu[menu.id].map((submenu, index) => {
-                            return <Link key={index} className="dropdown-item" to={`/category/${submenu.id}`}>{submenu.name}</Link>
+                            return <Link key={index} className="dropdown-item"
+                                         to={`/category/${submenu.id}`}>{submenu.name}</Link>
                         })}
 
                     </div>
@@ -73,7 +92,7 @@ class Navbar extends Component {
         } else {
             return (
                 <li key={index} className="nav-item">
-                    <Link className="nav-link" to={`/category/${menu.id}`} >{menu.name}</Link>
+                    <Link className="nav-link" to={`/category/${menu.id}`}>{menu.name}</Link>
                 </li>
             )
         }

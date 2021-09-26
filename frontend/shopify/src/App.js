@@ -7,17 +7,21 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import ProductPage from "./components/ProductPage";
 
+
 class App extends Component {
+    state = {
+        menu: [],
+        submenu: [],
+        user: null,
+        loggedIn: false,
+        user_permission: "",
+        orders: []
+    }
+
     constructor(props) {
         super(props);
-        this.state = {
-            menu: [],
-            submenu: [],
-            user: null,
-            loggedIn: false,
-            user_permission: ""
-        }
         this.getMenu()
+        this.syncOrders()
     }
 
     setStatus = (loginStatus) => {
@@ -44,6 +48,17 @@ class App extends Component {
 
     set_user_permission = (user_permission) => {
         this.setState({user_permission: user_permission})
+    }
+
+    syncOrders = () => {
+        const card = JSON.parse(localStorage.getItem('card'))
+
+        if (card !== null && card.orders !== undefined) {
+            console.log(card.orders)
+            this.setState({orders: ['sj']})
+            alert()
+        }
+
     }
 
     render() {
