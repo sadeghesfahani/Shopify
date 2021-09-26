@@ -16,7 +16,8 @@ class Category extends Component {
         products: [],
         page: 1,
         per_page: 10,
-        order_by: "created_time"
+        order_by: "created_time",
+        total_products: 0
     }
 
     async get_category() {
@@ -51,6 +52,11 @@ class Category extends Component {
             state_product.push(product)
         }
         this.setState({products: state_product})
+        const pagination_url = `http://127.0.0.1:8000/product/find/?category=${this.props.match.params.id}`
+        const pagination_raw = await fetch(pagination_url)
+        const result = await pagination_raw.json()
+        this.setState({total_products: result.length})
+
     }
 
     componentDidMount() {

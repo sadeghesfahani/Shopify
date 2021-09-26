@@ -101,8 +101,8 @@ class Navbar extends Component {
                         ناحیه کاربری
                     </a>
                     <div className="dropdown-menu" aria-labelledby='navbarDropdown-account'>
-                        <Link to="login" className="dropdown-item">ورود</Link>
-                        <Link to="register" className="dropdown-item">ثبت نام</Link>
+                        <Link to="/login" className="dropdown-item">ورود</Link>
+                        <Link to="/register" className="dropdown-item">ثبت نام</Link>
                     </div>
                 </li>
             )

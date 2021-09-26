@@ -84,7 +84,10 @@ class Product(models.Model):
 
     @property
     def media(self):
-        return Media.objects.filter(product=self, picture_type= Media.OTHER)
+        media_list = list()
+        for picture in Media.objects.filter(product=self, picture_type= Media.OTHER):
+            media_list.append(picture.picture.url)
+        return media_list
 
     @property
     def attributes(self):

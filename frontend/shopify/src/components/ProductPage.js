@@ -32,7 +32,7 @@ class ProductPage extends Component {
         const result = await fetch(url)
         const productInfo = await result.json()
         this.setState({product: productInfo})
-        this.setState({option: this.state.product.attributes[0]!==undefined ? this.state.product.attributes[0].options[0] : false})
+        this.setState({option: this.state.product.attributes[0] !== undefined ? this.state.product.attributes[0].options[0] : false})
     }
 
     generatePrice = () => {
@@ -60,18 +60,20 @@ class ProductPage extends Component {
             for (let product of card.orders) {
                 if (product.product === this.state.product.id) {
                     if (product.option === this.state.option.id) {
+                        card.orders[card.orders.indexOf(product)].quantity = card.orders[card.orders.indexOf(product)].quantity + 1
+                        localStorage.setItem('card', JSON.stringify(card))
                         doesProductExist = true
                     }
 
                 }
             }
             if (!doesProductExist) {
-                card.orders.push({product: this.state.product.id, option: this.state.option.id})
+                card.orders.push({product: this.state.product.id, option: this.state.option.id, quantity: 1})
                 localStorage.setItem('card', JSON.stringify(card))
             }
         } else {
             const new_card = {orders: []}
-            new_card.orders.push({product: this.state.product.id, option: this.state.option.id})
+            new_card.orders.push({product: this.state.product.id, option: this.state.option.id, quantity: 1})
             localStorage.setItem('card', JSON.stringify(new_card))
         }
 
