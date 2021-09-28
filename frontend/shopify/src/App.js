@@ -54,13 +54,13 @@ class App extends Component {
         const card = JSON.parse(localStorage.getItem('card'))
 
         if (card !== null && card.orders !== undefined) {
-            console.log(card.orders)
-            this.setState({orders: ['sj']})
-            alert()
+            this.setState({orders: card.orders})
         }
 
     }
-
+    updateOrder = (orders) =>{
+        this.setState({orders: orders})
+    }
     render() {
 
         return (
@@ -68,7 +68,7 @@ class App extends Component {
             <Router>
 
                 <Navbar menu={this.state.menu} submenu={this.state.submenu} loggedIn={this.state.loggedIn}
-                        handleStatus={this.setStatus} user_permission={this.state.user_permission}/>
+                        handleStatus={this.setStatus} user_permission={this.state.user_permission} orders={this.state.orders}/>
                 <div className='container-fluid'>
                     <Switch>
                         <Route path="/register">
@@ -81,7 +81,7 @@ class App extends Component {
                             <Category/>
                         </Route>
                         <Route path="/product/:id">
-                            <ProductPage/>
+                            <ProductPage updateOrder={this.updateOrder}/>
                         </Route>
                     </Switch>
                 </div>
@@ -99,6 +99,7 @@ class App extends Component {
         if (localStorage.getItem('user_permission') !== undefined) {
             this.setState({user_permission: localStorage.getItem('user_permission')})
         }
+        this.syncOrders()
     }
 }
 

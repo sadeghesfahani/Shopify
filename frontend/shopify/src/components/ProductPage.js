@@ -17,8 +17,6 @@ class ProductPage extends Component {
         const select = document.getElementById(id)
         const value = select.options[select.selectedIndex].value
         for (let option of this.state.product.attributes[0].options) {
-            console.log(value)
-            console.log(option)
             if (option.id == value) {
                 this.setState({option: option})
             }
@@ -27,7 +25,6 @@ class ProductPage extends Component {
     }
 
     async getProductInfo() {
-        console.log('here')
         const url = `http://127.0.0.1:8000/product/${this.props.match.params.id}/`
         const result = await fetch(url)
         const productInfo = await result.json()
@@ -62,19 +59,34 @@ class ProductPage extends Component {
                     if (product.option === this.state.option.id) {
                         card.orders[card.orders.indexOf(product)].quantity = card.orders[card.orders.indexOf(product)].quantity + 1
                         localStorage.setItem('card', JSON.stringify(card))
+                        this.props.updateOrder(card.orders)
                         doesProductExist = true
                     }
 
                 }
             }
             if (!doesProductExist) {
-                card.orders.push({product: this.state.product.id, option: this.state.option.id, quantity: 1})
+                card.orders.push({
+                    product: this.state.product.id,
+                    option: this.state.option.id,
+                    quantity: 1,
+                    name: this.state.product.name,
+                    price: this.generatePrice()
+                })
                 localStorage.setItem('card', JSON.stringify(card))
+                this.props.updateOrder(card.orders)
             }
         } else {
             const new_card = {orders: []}
-            new_card.orders.push({product: this.state.product.id, option: this.state.option.id, quantity: 1})
-            localStorage.setItem('card', JSON.stringify(new_card))
+            new_card.orders.push({
+                product: this.state.product.id,
+                option: this.state.option.id,
+                quantity: 1,
+                name: this.state.product.name,
+                price: this.generatePrice()
+            })
+            localStorage.setItem('card', JSON.stringify(new_card.orders))
+            this.props.updateOrder(new_card)
         }
 
     }

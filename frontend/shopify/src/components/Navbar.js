@@ -15,17 +15,31 @@ class Navbar extends Component {
         localStorage.setItem('isUserLoggedIn', "0")
         this.props.handleStatus(false)
     }
+    totalCard =() =>{
+        var total_number = 0
+        console.log(this.props.orders)
+        for (let order of this.props.orders){
+            total_number = total_number + order.quantity
+        }
+        return total_number
+    }
 
     generateCard() {
         return (
             <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" id='card' role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i className="bi bi-cart3"/>
+                    <i className="bi bi-cart3"/><span className="badge badge-primary">{this.totalCard()}</span>
                 </a>
                 <div className="dropdown-menu" aria-labelledby='card'>
-                    sdjhgjk
-                    {/*<Link className="dropdown-item" to=''>something</Link>*/}
+
+                    {this.props.orders && this.props.orders.map((order,index)=>{
+                        return (
+                            <div key={index}>{order.name}  <span className="badge badge-primary">{order.quantity}</span></div>
+                        )
+                    })}
+
+
                 </div>
             </li>
         )
