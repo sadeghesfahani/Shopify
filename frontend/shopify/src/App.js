@@ -6,6 +6,7 @@ import Category from "./components/Category";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import ProductPage from "./components/ProductPage";
+import Checkout from "./components/Checkout";
 
 
 class App extends Component {
@@ -82,6 +83,9 @@ class App extends Component {
                         </Route>
                         <Route path="/product/:id">
                             <ProductPage updateOrder={this.updateOrder}/>
+                        </Route>
+                        <Route path="/checkout">
+                            <Checkout updateOrder={this.updateOrder} orders={this.state.orders}/>
                         </Route>
                     </Switch>
                 </div>

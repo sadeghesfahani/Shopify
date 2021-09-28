@@ -15,12 +15,22 @@ class Navbar extends Component {
         localStorage.setItem('isUserLoggedIn', "0")
         this.props.handleStatus(false)
     }
-    totalCard =() =>{
+
+    totalCard = () => {
         var total_number = 0
-        for (let order of this.props.orders){
-            total_number = total_number + order.quantity
+        if (this.props.orders.length > 1) {
+            for (let order of this.props.orders) {
+                total_number = total_number + order.quantity
+            }
+            return total_number
+        } else if(this.props.orders.length ===1){
+            return this.props.orders[0].quantity
         }
-        return total_number
+        return null
+
+    }
+    generateSingleOrder = () =>{
+        return <div>{this.props.orders[0].name} <span className="badge badge-primary">{this.props.orders[0].quantity}</span></div>
     }
 
     generateCard() {
@@ -32,12 +42,15 @@ class Navbar extends Component {
                 </a>
                 <div className="dropdown-menu" aria-labelledby='card'>
 
-                    {this.props.orders && this.props.orders.map((order,index)=>{
+                    {this.props.orders && this.props.orders.length > 0 && this.props.orders.map((order, index) => {
                         return (
-                            <div key={index}>{order.name}  <span className="badge badge-primary">{order.quantity}</span></div>
+                            <div key={index}>{order.name} <span className="badge badge-primary">{order.quantity}</span>
+                            </div>
                         )
                     })}
-                    <Link to='' className='btn btn-primary'>سبد خرید</Link>
+
+                    {/*{this.props.orders && this.props.orders.length === 1 && this.generateSingleOrder()}*/}
+                    <Link to='/checkout' className='btn btn-primary'>سبد خرید</Link>
 
                 </div>
             </li>
