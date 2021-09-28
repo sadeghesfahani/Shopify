@@ -30,8 +30,15 @@ class Operator extends Component {
         const orders_copy = orders
         let card = localStorage.getItem('card')
         card = JSON.parse(card)
-        const removed = card.orders.splice(id,id)
-        if (removed.length === 0) {
+        console.log("first",id,card.orders)
+        if (id ===0){
+            const removed = card.orders.splice(0,1)
+        }else{
+            const removed = card.orders.splice(id,id)
+        }
+
+        console.log("last",card.orders)
+        if (card.orders.length === 0) {
             localStorage.removeItem('card')
             this.props.updateOrder("")
         }else{

@@ -2,6 +2,16 @@ import React, {Component} from 'react';
 import Operator from "./Operator";
 
 class Checkout extends Component {
+    totalPrice = () =>{
+        if (this.props.orders){
+            var price = 0
+            for ( let order of this.props.orders){
+                console.log(order)
+                price = price + order.price * order.quantity
+            }
+            return price
+        }
+    }
     generateList = () => {
         return (
 
@@ -34,8 +44,8 @@ class Checkout extends Component {
                 <tr>
                     <td/>
                     <td/>
-                    <td/>
-                    <td>asd</td>
+                    <td>جمع کل: </td>
+                    <td>{this.totalPrice()}</td>
                     <td/>
                 </tr>
 
