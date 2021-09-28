@@ -33,6 +33,7 @@ class CardAPI(viewsets.ViewSet, generics.GenericAPIView):
         code = request.GET.get('code')
         if self.discount.validate(self.request.user, code=code):
             return Response({'status': True})
+        return Response({'status': False})
 
     def get_permissions(self):
         if self.action == 'list':

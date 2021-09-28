@@ -16,7 +16,8 @@ class App extends Component {
         user: null,
         loggedIn: false,
         user_permission: "",
-        orders: []
+        orders: [],
+        redirectTo: "/"
     }
 
     constructor(props) {
@@ -62,6 +63,9 @@ class App extends Component {
     updateOrder = (orders) =>{
         this.setState({orders: orders})
     }
+    redirectTo = (address) =>{
+        this.setState({redirectTo:address})
+    }
     render() {
 
         return (
@@ -73,7 +77,7 @@ class App extends Component {
                 <div className='container-fluid'>
                     <Switch>
                         <Route path="/register">
-                            <Register handleStatus={this.setStatus} set_user_permission={this.set_user_permission}/>
+                            <Register handleStatus={this.setStatus} set_user_permission={this.set_user_permission} redirectTo={this.state.redirectTo}/>
                         </Route>
                         <Route path="/login">
                             <Login handleStatus={this.setStatus} set_user_permission={this.set_user_permission}/>
@@ -85,7 +89,12 @@ class App extends Component {
                             <ProductPage updateOrder={this.updateOrder}/>
                         </Route>
                         <Route path="/checkout">
-                            <Checkout updateOrder={this.updateOrder} orders={this.state.orders}/>
+                            <Checkout
+                                updateOrder={this.updateOrder}
+                                orders={this.state.orders}
+                                redirectTo={this.redirectTo}
+                            loggedIn={this.state.loggedIn}
+                            user={this.state.user}/>
                         </Route>
                     </Switch>
                 </div>

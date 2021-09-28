@@ -21,7 +21,7 @@ class Register extends Component {
         },
         errors: {},
         redirect: false,
-        is_admin: false
+        is_admin: false,
     }
     schema = {
         email: Joi.string().email().required(),
@@ -100,8 +100,8 @@ class Register extends Component {
         this.setState(state)
     }
 
-    redirectToHome() {
-        return <Redirect to='/'/>
+    redirectToHome = () => {
+        return <Redirect to={`/${this.props.redirectTo}`}/>
     }
 
     handleClick = () => {
