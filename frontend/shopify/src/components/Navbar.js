@@ -17,7 +17,6 @@ class Navbar extends Component {
     }
     totalCard =() =>{
         var total_number = 0
-        console.log(this.props.orders)
         for (let order of this.props.orders){
             total_number = total_number + order.quantity
         }
@@ -38,7 +37,7 @@ class Navbar extends Component {
                             <div key={index}>{order.name}  <span className="badge badge-primary">{order.quantity}</span></div>
                         )
                     })}
-
+                    <Link to='' className='btn btn-primary'>سبد خرید</Link>
 
                 </div>
             </li>
