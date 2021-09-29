@@ -1,18 +1,19 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, permissions
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from .serializers import TokenSerializer, UserSerializerRegister, UserSerializerShow
+from .serializers import TokenSerializer, UserSerializerRegister, UserSerializerShow, AddressSerializer
 from .users import *
+from .models import Address as AddressModel
+from .address import Address
 
 
 class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = UserSerializerRegister
     queryset = get_user_model()
 
-
-    def create(self, request):
-
+    @staticmethod
+    def create(request):
         structured_user_data = UserDataStructure(**request.data)
         user = BaseUserModel(request).register(structured_user_data)
         BaseUserModel(request).logUserInByInstance(user)
@@ -51,3 +52,18 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
             return Response({"status": True, "token": token, "user_permission": user_permission})
         else:
             return Response({"Status": False})
+
+
+class AddressAPI(viewsets.ViewSet, generics.GenericAPIView):
+    serializer_class = AddressSerializer
+    queryset = AddressModel()
+
+    def list(self, request):
+        print("here")
+        address_object = Address()
+        user_addresses = address_object.selectByUser(request.user)
+        return Response(self.serializer_class(user_addresses, many=True).data)
+
+    def get_permissions(self):
+        self.permission_classes = [permissions.IsAuthenticated]
+        return super(AddressAPI, self).get_permissions()

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from account.models import Address
 from store.models import Store
 
 
@@ -34,3 +35,9 @@ class UserSerializerShow(serializers.Serializer):
         if self.counter == 0:
             self.counter += 1
             return Store.objects.filter(admins=instance)
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['address', 'postal_code']

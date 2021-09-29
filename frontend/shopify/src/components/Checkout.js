@@ -111,10 +111,6 @@ class Checkout extends Component {
         )
     }
 
-    goToLogIn = () => {
-        alert()
-        return <Redirect to={{pathname: "/login", state: {redirectLink: "/checkout"}}}/>
-    }
 
     generateLog = () => {
         this.props.redirectTo('/checkout')
