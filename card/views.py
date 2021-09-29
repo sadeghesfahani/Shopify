@@ -32,7 +32,8 @@ class CardAPI(viewsets.ViewSet, generics.GenericAPIView):
     def discount_validation(self, request):
         code = request.GET.get('code')
         if self.discount.validate(self.request.user, code=code):
-            return Response({'status': True})
+            discount_object = self.discount.getByCode(code)
+            return Response({'status': True, "percent": discount_object.discount})
         return Response({'status': False})
 
     def get_permissions(self):

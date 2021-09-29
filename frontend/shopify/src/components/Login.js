@@ -14,7 +14,8 @@ class Login extends Component {
         },
         errors: {},
         redirect: false,
-        loggedIn: localStorage.getItem('isUserLoggedIn')
+        loggedIn: localStorage.getItem('isUserLoggedIn'),
+        redirectLink : ""
     }
 
     handleChange = ({currentTarget: input}) => {
@@ -42,7 +43,7 @@ class Login extends Component {
     }
 
     redirectToHome() {
-        return <Redirect to='/'/>
+        return <Redirect to={this.props.redirectTo}/>
     }
 
     prepareData = () => {

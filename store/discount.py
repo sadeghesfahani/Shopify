@@ -26,6 +26,10 @@ class Discount(BaseMarketObjectManager):
         return newly_added_discount
 
     @handleError(targetObject)
+    def getByCode(self, code):
+        return self.targetObject.objects.get(code=code)
+
+    @handleError(targetObject)
     def validate(self, user, code):
         discount = self.targetObject.objects.get(code=code)
         return True if discount.is_valid(user) else False

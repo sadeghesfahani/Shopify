@@ -63,8 +63,8 @@ class App extends Component {
     updateOrder = (orders) =>{
         this.setState({orders: orders})
     }
-    redirectTo = (address) =>{
-        this.setState({redirectTo:address})
+    setRedirectTo = (address) =>{
+        this.state.redirectTo = address
     }
     render() {
 
@@ -80,7 +80,7 @@ class App extends Component {
                             <Register handleStatus={this.setStatus} set_user_permission={this.set_user_permission} redirectTo={this.state.redirectTo}/>
                         </Route>
                         <Route path="/login">
-                            <Login handleStatus={this.setStatus} set_user_permission={this.set_user_permission}/>
+                            <Login handleStatus={this.setStatus} set_user_permission={this.set_user_permission} redirectTo={this.state.redirectTo}/>
                         </Route>
                         <Route path="/category/:id">
                             <Category/>
@@ -92,7 +92,7 @@ class App extends Component {
                             <Checkout
                                 updateOrder={this.updateOrder}
                                 orders={this.state.orders}
-                                redirectTo={this.redirectTo}
+                                redirectTo={this.setRedirectTo}
                             loggedIn={this.state.loggedIn}
                             user={this.state.user}/>
                         </Route>

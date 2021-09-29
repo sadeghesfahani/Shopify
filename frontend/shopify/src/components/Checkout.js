@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import Operator from "./Operator";
+import {Link, withRouter, Redirect} from "react-router-dom";
 
 class Checkout extends Component {
     state = {
         discount: "",
-        discountValidation: ""
+        discountValidation: "",
+        discountPercent: 0
     }
 
     totalPrice = () => {
@@ -16,6 +18,11 @@ class Checkout extends Component {
             }
             return price
         }
+    }
+    totalPriceWithDiscount = () => {
+        const totalPrice = this.totalPrice()
+        const withDiscount = totalPrice * (100 - this.state.discountPercent) / 100
+        return withDiscount
     }
     generateList = () => {
         return (
@@ -48,11 +55,11 @@ class Checkout extends Component {
                     )
                 })}
                 <tr>
-                    <td/>
-                    <td/>
                     <td>جمع کل:</td>
-                    <td>{this.totalPrice()}</td>
-                    <td/>
+                    <td>{this.state.discountValidation && this.totalPriceWithDiscount() || this.totalPrice()}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
 
                 </tbody>
@@ -63,22 +70,28 @@ class Checkout extends Component {
     handleChange = ({currentTarget: input}) => {
         this.setState({discount: input.value})
     }
-    checkDiscount =()=>{
+    checkDiscount = () => {
         const option = {
             method: "GET",
             headers: {
                 'Accept': 'application/json, text/plain',
                 'Content-Type': 'application/json;charset=UTF-8',
-                'Authorization' : `token ${this.props.user}`
+                'Authorization': `token ${this.props.user ? this.props.user : localStorage.getItem('user')}`
             }
         }
+        console.log(option)
         const url = `http://127.0.0.1:8000/card/card/discount_validation/?code=${this.state.discount}`
-        fetch(url,option).then(response => response.json()).then(data => this.handleValidation(data))
+        fetch(url, option).then(response => response.json()).then(data => this.handleValidation(data))
     }
-    handleValidation =(data)=>{
-        if (data.status){
-            this.setState({discountValidation: data.status})
-        }else {
+    handleValidation = (data) => {
+        if (data.status) {
+            this.setState({discountValidation: data.status, discountPercent: data.percent})
+            let card = localStorage.getItem('card')
+            card = JSON.parse(card)
+            card['discount'] = this.state.discount
+            localStorage.setItem('card', JSON.stringify(card))
+
+        } else {
             this.setState({discountValidation: false})
         }
     }
@@ -89,7 +102,7 @@ class Checkout extends Component {
                 <label htmlFor='discount'>کد تخفیف</label>
                 <input type="text" id='discount' name="discount" value={this.state.discount}
                        onChange={this.handleChange}/>
-                       <button onClick={this.checkDiscount}>ثبت</button>
+                <button onClick={this.checkDiscount}>ثبت</button>
                 {console.log(this.state.discountValidation)}
                 {this.state.discountValidation && <h1>yes</h1>}
                 {!this.state.discountValidation && <h1>No</h1>}
@@ -98,14 +111,38 @@ class Checkout extends Component {
         )
     }
 
+    goToLogIn = () => {
+        alert()
+        return <Redirect to={{pathname: "/login", state: {redirectLink: "/checkout"}}}/>
+    }
+
+    generateLog = () => {
+        this.props.redirectTo('/checkout')
+        return (
+            <>
+                <Link to='/login'> ورود </Link>
+                <Link to="/register"> ثبت نام </Link>
+            </>
+        )
+    }
+
     render() {
         return (
             <div>
                 {this.generateList()}
-                {this.props.loggedIn && this.generateCheckout()}
+                {this.props.loggedIn && this.generateCheckout() || this.generateLog()}
             </div>
         );
     }
+    async componentDidMount() {
+        let card = localStorage.getItem('card')
+        card = JSON.parse(card)
+        if(card['discount']){
+            await this.setState({discount:card['discount']})
+            this.checkDiscount()
+        }
+    }
+
 }
 
-export default Checkout;
+export default withRouter(Checkout);
