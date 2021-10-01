@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .serializers import TokenSerializer, UserSerializerRegister, UserSerializerShow, AddressSerializer
 from .users import *
 from .models import Address as AddressModel
-from .address import Address, AddressDataStructure
+from .address import Address
 
 
 class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
@@ -25,8 +25,18 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
     def update(request, pk=None):
         user = BaseUserModel(request).getUserByToken(request.data.get('token'))
         if user is not None:
-            user_structured_data = UserDataStructure(**request.data.__dict__)
+            user_structured_data = UserDataStructureForEdit(**request.data)
             user.__dict__.update(**user_structured_data.__dict__)
+            if 'password' in user_structured_data.__dict__:
+                if 'last_password' in user_structured_data.__dict__:
+                    checking_password_user = authenticate(email=user.email, password=user_structured_data.last_password)
+                    if checking_password_user is not None:
+                        user.set_password(user_structured_data.password)
+                    else:
+                        raise PermissionDenied('password does not match')
+                else:
+                    raise PermissionDenied('fill last password')
+            print(user.__dict__)
             user.save()
             return Response(UserSerializerShow(user, many=False).data)
         else:
@@ -70,18 +80,16 @@ class AddressAPI(viewsets.ViewSet, generics.GenericAPIView):
     queryset = AddressModel()
 
     def list(self, request):
-        address_object = Address()
-        user_addresses = address_object.selectByUser(request.user)
+        user_addresses = Address().selectByUser(request.user)
         return Response(self.serializer_class(user_addresses, many=True).data)
 
     @staticmethod
     def create(request):
-        structured_address = AddressDataStructure(user=request.user, **request.data.__dict__)
-        return Response(AddressSerializer(Address.addAddress(**structured_address.__dict__), many=False).data)
+        return Response(AddressSerializer(Address().addAddress(user=request.user, **request.data), many=False).data)
 
     @staticmethod
     def update(request, pk=None):
-        modified_address = Address.editAddress(pk, **request.data.__dict__, user=request.user)
+        modified_address = Address().editAddress(pk, **request.data, user=request.user)
         return Response(AddressSerializer(modified_address, many=False).data)
 
     def get_permissions(self):

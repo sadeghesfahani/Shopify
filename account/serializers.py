@@ -40,4 +40,4 @@ class UserSerializerShow(serializers.Serializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ['address', 'postal_code']
+        fields = "__all__"

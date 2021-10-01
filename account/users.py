@@ -17,6 +17,23 @@ class RegistrationFailed(Exception):
     pass
 
 
+class UserDataStructureForEdit:
+    def __init__(self, first_name=None, last_name=None, email=None, password=None, user_type=None, last_password=None,
+                 *args, **kwargs):
+        if first_name is not None:
+            self.first_name = first_name
+        if last_name is not None:
+            self.last_name = last_name
+        if email is not None:
+            self.email = email
+        if password is not None:
+            self.password = password
+        if last_password is not None:
+            self.last_password = last_password
+        if user_type is not None:
+            self.user_type = user_type
+
+
 class UserDataStructure:
     def __init__(self, first_name=None, last_name=None, email=None, password=None, user_type=0, *args, **kwargs):
         self.first_name = first_name
@@ -73,7 +90,6 @@ class BaseUserModel:
         newly_added_address = Address(user=user_object, address=address, postal_code=postal_code)
         newly_added_address.save()
         return newly_added_address
-
 
     def getUserByEmail(self, email):
         try:
