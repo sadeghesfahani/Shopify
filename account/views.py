@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .serializers import TokenSerializer, UserSerializerRegister, UserSerializerShow, AddressSerializer
 from .users import *
 from .models import Address as AddressModel
-from .address import Address
+from .address import Address, AddressDataStructure
 
 
 class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
@@ -20,6 +20,17 @@ class AuthenticationAPI(viewsets.ViewSet, generics.GenericAPIView):
         token_key = BaseUserModel(request).getToken(user)
         token = {'token': token_key}
         return Response(TokenSerializer(token, many=False).data)
+
+    @staticmethod
+    def update(request, pk=None):
+        user = BaseUserModel(request).getUserByToken(request.data.get('token'))
+        if user is not None:
+            user_structured_data = UserDataStructure(**request.data.__dict__)
+            user.__dict__.update(**user_structured_data.__dict__)
+            user.save()
+            return Response(UserSerializerShow(user, many=False).data)
+        else:
+            return Response({"status": False})
 
     @staticmethod
     def retrieve(request, pk=None):
@@ -59,10 +70,19 @@ class AddressAPI(viewsets.ViewSet, generics.GenericAPIView):
     queryset = AddressModel()
 
     def list(self, request):
-        print("here")
         address_object = Address()
         user_addresses = address_object.selectByUser(request.user)
         return Response(self.serializer_class(user_addresses, many=True).data)
+
+    @staticmethod
+    def create(request):
+        structured_address = AddressDataStructure(user=request.user, **request.data.__dict__)
+        return Response(AddressSerializer(Address.addAddress(**structured_address.__dict__), many=False).data)
+
+    @staticmethod
+    def update(request, pk=None):
+        modified_address = Address.editAddress(pk, **request.data.__dict__, user=request.user)
+        return Response(AddressSerializer(modified_address, many=False).data)
 
     def get_permissions(self):
         self.permission_classes = [permissions.IsAuthenticated]

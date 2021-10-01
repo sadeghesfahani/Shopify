@@ -43,6 +43,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+
     # def price(self):
     #     return PriceSerializer(self.price)
 

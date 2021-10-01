@@ -21,8 +21,8 @@ class Address:
         return newly_added_address
 
     @handleError(targetObject)
-    def editAddress(self, address_id, data):
-        structured_data = AddressDataStructure(data)
+    def editAddress(self, address_id, **kwargs):
+        structured_data = AddressDataStructure(kwargs)
         address_to_edit = self.targetObject.objects.get(pk=address_id)
         address_to_edit.__dict__.update(**structured_data.__dict__)
         address_to_edit.save()

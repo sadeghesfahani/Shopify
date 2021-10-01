@@ -7,3 +7,4 @@ class CardSerializer(serializers.ModelSerializer):
         model = Card
         fields = ['orders', 'additional_option', 'delivery', 'status', 'address_to_send_good',
                   'address_to_send_invoice', 'receive_time', 'total_cost', 'total_products_cost','discount']
+
