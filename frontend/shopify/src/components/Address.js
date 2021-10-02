@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 
 class Address extends Component {
+    handleAddAddress = () =>{
+        alert()
+    }
     generateAddress = () => {
         return (
             <>
@@ -16,6 +19,12 @@ class Address extends Component {
                         return <option key={index} name={address.id} value={address.id}>{address.address}</option>
                     })}
                 </select>
+
+                <label htmlFor="add_new_address">آدرس</label>
+                <input name='add_new_address' id='add_new_address'/>
+                <label htmlFor="add_new_postal">کد پستی</label>
+                <input type='number' name='add_new_postal' id='add_new_postal'/>
+                <button onClick={this.handleAddAddress} className='btn btn-primary'>افزودن آدرس جدید</button>
             </>
         )
     }

@@ -103,7 +103,7 @@ class Checkout extends Component {
                 <label htmlFor='discount'>کد تخفیف</label>
                 <input type="text" id='discount' name="discount" value={this.state.discount}
                        onChange={this.handleChange}/>
-                <button onClick={this.checkDiscount}>ثبت</button>
+                <button className='btn btn-primary' onClick={this.checkDiscount}>ثبت</button>
                 {console.log(this.state.discountValidation)}
                 {this.state.discountValidation && <h1>yes</h1>}
                 {!this.state.discountValidation && <h1>No</h1>}
