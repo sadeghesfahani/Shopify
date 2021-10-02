@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Operator from "./Operator";
 import {Link, withRouter, Redirect} from "react-router-dom";
+import User from "./User";
 
 class Checkout extends Component {
     state = {
@@ -106,6 +107,7 @@ class Checkout extends Component {
                 {console.log(this.state.discountValidation)}
                 {this.state.discountValidation && <h1>yes</h1>}
                 {!this.state.discountValidation && <h1>No</h1>}
+                {this.generateUser()}
             </>
 
         )
@@ -122,11 +124,28 @@ class Checkout extends Component {
         )
     }
 
+    generateUser =()=>{
+                    return <User/>
+
+    }
+    information = () =>{
+        if (this.props.loggedIn){
+
+            return this.generateCheckout()
+
+        } else {
+            return this.generateLog()
+        }
+    }
+
     render() {
         return (
             <div>
                 {this.generateList()}
-                {this.props.loggedIn && this.generateCheckout() || this.generateLog()}
+                {this.information()}
+                {/*{this.props.loggedIn && this.generateCheckout() || this.generateLog()}*/}
+
+
             </div>
         );
     }
