@@ -1,10 +1,12 @@
 from rest_framework import viewsets, generics, permissions
 from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from card.card import Card, CardDataStructure
-from card.serializers import CardSerializer
+from card.card import Card, CardDataStructure, Delivery
+from card.serializers import CardSerializer, DeliverySerializer, OptionSerializer
 from store.discount import Discount
+from .models import Delivery as DeliveryModel, AdditionalOption as OptionModel
 from store.errors import handleError
 
 
@@ -40,3 +42,13 @@ class CardAPI(viewsets.ViewSet, generics.GenericAPIView):
         if self.action == 'list':
             self.permission_classes = [permissions.IsAuthenticated]
         return super(CardAPI, self).get_permissions()
+
+
+class DeliveryAPI(viewsets.ViewSet, ListAPIView):
+    serializer_class = DeliverySerializer
+    queryset = DeliveryModel.objects.all()
+
+
+class OptionsAPI(viewsets.ViewSet, ListAPIView):
+    serializer_class = OptionSerializer
+    queryset = OptionModel.objects.all()

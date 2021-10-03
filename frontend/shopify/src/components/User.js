@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Address from "./Address";
+import Options from "./Options";
 
 class User extends Component {
     state = {
@@ -45,7 +46,7 @@ class User extends Component {
                 <label htmlFor='last_name'>نام خانوادگی: </label>
                 <input name='last_name' id='last_name' value={this.state.last_name} onChange={this.handleChange}/>
                 <Address address ={this.state.address}/>
-
+                <Options/>
             </div>
         );
     }
