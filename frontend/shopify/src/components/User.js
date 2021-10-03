@@ -31,8 +31,9 @@ class User extends Component {
 
     }
     updateAddressForm = (data) => {
-        console.log(data)
         this.setState({address: data})
+        this.props.send(data[0].id)
+        this.props.invoice(data[0].id)
     }
     handleChange =({currentTarget: input})=>{
         this.setState({[input.id] : input.value})
@@ -45,8 +46,12 @@ class User extends Component {
                 <input name='first_name' id='first_name' value={this.state.first_name} onChange={this.handleChange}/>
                 <label htmlFor='last_name'>نام خانوادگی: </label>
                 <input name='last_name' id='last_name' value={this.state.last_name} onChange={this.handleChange}/>
-                <Address address ={this.state.address}/>
-                <Options/>
+                <Address address={this.state.address}
+                         send ={this.props.send}
+                         invoice={this.props.invoice}
+                         user={this.props.user}
+                refresh={this.getInfo}/>
+                <Options delivery={this.props.delivery} option={this.props.option}/>
             </div>
         );
     }

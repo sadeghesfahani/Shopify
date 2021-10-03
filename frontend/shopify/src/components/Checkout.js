@@ -7,7 +7,25 @@ class Checkout extends Component {
     state = {
         discount: "",
         discountValidation: "",
-        discountPercent: 0
+        discountPercent: 0,
+        option: "",
+        address_to_send: "",
+        address_to_invoice: "",
+        delivery: "",
+
+    }
+
+    changeDelivery = (delivery) => {
+        this.setState({delivery: delivery})
+    }
+    changeAddressToSend = (address) => {
+        this.setState({address_to_send: address})
+    }
+    changeAddressToInvoice = (address) => {
+        this.setState({address_to_invoice: address})
+    }
+    changeOption = (option) => {
+        this.setState({option: option})
     }
 
     totalPrice = () => {
@@ -124,12 +142,16 @@ class Checkout extends Component {
         )
     }
 
-    generateUser =()=>{
-                    return <User/>
+    generateUser = () => {
+        return <User delivery={this.changeDelivery}
+                     option={this.changeOption}
+                     send={this.changeAddressToSend}
+                     invoice={this.changeAddressToInvoice}
+                     user={this.props.user}/>
 
     }
-    information = () =>{
-        if (this.props.loggedIn){
+    information = () => {
+        if (this.props.loggedIn) {
 
             return this.generateCheckout()
 
@@ -149,11 +171,12 @@ class Checkout extends Component {
             </div>
         );
     }
+
     async componentDidMount() {
         let card = localStorage.getItem('card')
         card = JSON.parse(card)
-        if(card['discount']){
-            await this.setState({discount:card['discount']})
+        if (card['discount']) {
+            await this.setState({discount: card['discount']})
             this.checkDiscount()
         }
     }

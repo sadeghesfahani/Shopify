@@ -9,14 +9,14 @@ class Options extends Component {
     handleDelivery = (data) => {
         this.setState({delivery: data})
     }
-    handleOption =(data)=>{
-        this.setState({option:data})
+    handleOption = (data) => {
+        this.setState({option: data})
     }
     generateDelivery = () => {
         const url = 'http://127.0.0.1:8000/card/delivery/'
         fetch(url).then(response => response.json()).then(data => this.handleDelivery(data))
         const url2 = 'http://127.0.0.1:8000/card/options/'
-        fetch(url2).then(response => response.json()).then(data =>this.handleOption(data))
+        fetch(url2).then(response => response.json()).then(data => this.handleOption(data))
     }
 
     render() {
