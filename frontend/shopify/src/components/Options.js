@@ -8,9 +8,11 @@ class Options extends Component {
 
     handleDelivery = (data) => {
         this.setState({delivery: data})
+        this.props.delivery({id: data[0].id, price: data[0].price})
     }
     handleOption = (data) => {
         this.setState({option: data})
+        this.props.option({id:data[0].id,type:data[0].option_type,price:data[0].cost})
     }
     generateDelivery = () => {
         const url = 'http://127.0.0.1:8000/card/delivery/'
@@ -19,19 +21,39 @@ class Options extends Component {
         fetch(url2).then(response => response.json()).then(data => this.handleOption(data))
     }
 
+    deliveryChange = (e) => {
+        const data = {
+            id: e.target.options[e.target.selectedIndex].id,
+            price: e.target.options[e.target.selectedIndex].dataset.price
+        }
+        console.log(data)
+        this.props.delivery(data)
+    }
+
+    optionChange = (e) => {
+        const data = {
+            id: e.target.options[e.target.selectedIndex].id,
+            price: e.target.options[e.target.selectedIndex].dataset.price,
+            type:e.target.options[e.target.selectedIndex].dataset.optiontype
+        }
+        console.log(data)
+        this.props.option(data)
+    }
+
     render() {
         return (
             <div>
-                <select name='delivery' id='delivery'>
+                <select onChange={this.deliveryChange} name='delivery' id='delivery'>
                     {this.state.delivery && this.state.delivery.map((delivery, index) => {
                         return <option key={index} name={delivery.id} id={delivery.id}
                                        data-price={delivery.price}>{delivery.name}</option>
                     })}
                 </select>
-                <select name='option' id='option'>
+                <select onChange={this.optionChange} name='option' id='option'>
                     {this.state.option && this.state.option.map((option, index) => {
                         return <option key={index} name={option.id} id={option.id}
-                                       data-price={option.price}>{option.name}</option>
+                                       data-price={option.cost}
+                                       data-optiontype={option.option_type}>{option.name}</option>
                     })}
                 </select>
             </div>

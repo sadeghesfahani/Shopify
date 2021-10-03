@@ -9,14 +9,17 @@ class Checkout extends Component {
         discountValidation: "",
         discountPercent: 0,
         option: "",
+        option_type: "",
+        option_price: "",
         address_to_send: "",
         address_to_invoice: "",
         delivery: "",
+        delivery_price: ""
 
     }
 
     changeDelivery = (delivery) => {
-        this.setState({delivery: delivery})
+        this.setState({delivery: delivery['id'], delivery_price: delivery['price']})
     }
     changeAddressToSend = (address) => {
         this.setState({address_to_send: address})
@@ -25,7 +28,7 @@ class Checkout extends Component {
         this.setState({address_to_invoice: address})
     }
     changeOption = (option) => {
-        this.setState({option: option})
+        this.setState({option: option['id'],option_type:option['type'],option_price:option['price']})
     }
 
     totalPrice = () => {
@@ -42,6 +45,22 @@ class Checkout extends Component {
         const totalPrice = this.totalPrice()
         const withDiscount = totalPrice * (100 - this.state.discountPercent) / 100
         return withDiscount
+    }
+
+    finalPrice =()=>{
+        window.basic = 0
+        if(this.state.discountValidation){
+            window.basic = this.totalPriceWithDiscount()
+        }else{
+            window.basic = this.totalPrice()
+        }
+        if(this.state.option_type == 0 ){
+
+            window.option_price = window.basic * (1+Number(this.state.option_price)/100)
+        }else{
+            window.option_price = window.basic + Number(this.state.option_price)
+        }
+        return parseInt((window.option_price + Number(this.state.delivery_price)))
     }
     generateList = () => {
         return (
@@ -75,7 +94,7 @@ class Checkout extends Component {
                 })}
                 <tr>
                     <td>جمع کل:</td>
-                    <td>{this.state.discountValidation && this.totalPriceWithDiscount() || this.totalPrice()}</td>
+                    <td>{this.finalPrice()}</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -141,6 +160,7 @@ class Checkout extends Component {
             </>
         )
     }
+
 
     generateUser = () => {
         return <User delivery={this.changeDelivery}
