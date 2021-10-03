@@ -28,7 +28,7 @@ class Checkout extends Component {
         this.setState({address_to_invoice: address})
     }
     changeOption = (option) => {
-        this.setState({option: option['id'],option_type:option['type'],option_price:option['price']})
+        this.setState({option: option['id'], option_type: option['type'], option_price: option['price']})
     }
 
     totalPrice = () => {
@@ -47,20 +47,77 @@ class Checkout extends Component {
         return withDiscount
     }
 
-    finalPrice =()=>{
+    finalPrice = () => {
         window.basic = 0
-        if(this.state.discountValidation){
+        if (this.state.discountValidation) {
             window.basic = this.totalPriceWithDiscount()
-        }else{
+        } else {
             window.basic = this.totalPrice()
         }
-        if(this.state.option_type == 0 ){
+        if (this.state.option_type == 0) {
 
-            window.option_price = window.basic * (1+Number(this.state.option_price)/100)
-        }else{
+            window.option_price = window.basic * (1 + Number(this.state.option_price) / 100)
+        } else {
             window.option_price = window.basic + Number(this.state.option_price)
         }
         return parseInt((window.option_price + Number(this.state.delivery_price)))
+    }
+    generateAllTable=()=>{
+        return (
+            <tr>
+                <td>جمع کل کالا:</td>
+                <td>{this.totalPrice()}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        )
+    }
+    generateDiscountTable = () => {
+        return (
+            <tr>
+                <td>تخفیف:</td>
+                <td>{parseInt(this.totalPrice() * this.state.discountPercent/100)}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        )
+    }
+    generateDeliveryTable=()=>{
+        return (
+            <tr>
+                <td>هزینه ارسال:</td>
+                <td>{this.state.delivery_price}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        )
+    }
+    generateOptionTable=()=>{
+        window.basic = 0
+        if (this.state.discountValidation) {
+            window.basic = this.totalPriceWithDiscount()
+        } else {
+            window.basic = this.totalPrice()
+        }
+        if (this.state.option_type == 0) {
+
+            window.option_price = window.basic * Number(this.state.option_price) / 100
+        } else {
+            window.option_price = Number(this.state.option_price)
+        }
+
+        return (
+            <tr>
+                <td>هزینه خدمات:</td>
+                <td>{parseInt(window.option_price)}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        )
     }
     generateList = () => {
         return (
@@ -92,8 +149,12 @@ class Checkout extends Component {
                         </tr>
                     )
                 })}
+                {this.generateAllTable()}
+                {this.state.discountValidation && this.generateDiscountTable()}
+                {this.generateDeliveryTable()}
+                {this.generateOptionTable()}
                 <tr>
-                    <td>جمع کل:</td>
+                    <td>مبلغ قابل پرداخت:</td>
                     <td>{this.finalPrice()}</td>
                     <td></td>
                     <td></td>
