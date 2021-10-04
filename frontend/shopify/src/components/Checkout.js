@@ -240,12 +240,50 @@ class Checkout extends Component {
             return this.generateLog()
         }
     }
+    addCard=()=> {
+        const data = {discount:this.state.discount,
+            additional_option:this.state.option,
+            delivery: this.state.delivery,
+            address_to_send_good: this.state.address_to_send,
+            address_to_send_invoice: this.state.address_to_invoice,
+            receive_time: "2021-11-18 13:24:46",
+            orders:this.reformatOrders()
+        }
+        const option = {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8',
+                'Authorization': `token ${this.props.user ? this.props.user : localStorage.getItem('user')}`
+            }
+        }
+        const url = 'http://127.0.0.1:8000/card/card/'
+        fetch(url,option).then(response =>response.json()).then(data=>this.cardAdded(data))
+    }
+    reformatOrders =()=>{
+        var final_order_list = []
+        for(let order of this.props.orders){
+            if(order.option){
+                final_order_list.push({product:order.product,quantity: order.quantity,option:order.option})
+            }else{
+                final_order_list.push({product:order.product,quantity: order.quantity})
+            }
+        }
+        return final_order_list
+    }
+    cardAdded =(data)=>{
+        console.log(data)
+    }
+
+
 
     render() {
         return (
             <div>
                 {this.generateList()}
                 {this.information()}
+                <button onClick={this.addCard} className='btn btn-primary'>پرداخت</button>
                 {/*{this.props.loggedIn && this.generateCheckout() || this.generateLog()}*/}
 
 

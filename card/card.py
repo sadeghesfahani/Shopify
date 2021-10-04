@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from account.models import Address as AddressModel
 from account.users import BaseUserModel
 from shopify_first_try.utils import IsId, getObject
-from store.errors import handleError
+from store.errors import handleError, BadRequest
 from store.market import Market
 from store.discount import Discount
 from store.market_manager import BaseMarketObjectManager
@@ -85,8 +85,8 @@ class Order:
         return self.targetObject.objects.get(pk=order_id)
 
     @handleError(targetObject)
-    def addNew(self, product, quantity, product_option=None):
-        order_structured_data = OrderDataStructure(product, product_option, quantity)
+    def addNew(self, product, quantity, option=None):
+        order_structured_data = OrderDataStructure(product, option, quantity)
         newly_added_order = self.targetObject(**order_structured_data.__dict__)
         newly_added_order.save()
         return newly_added_order
@@ -118,7 +118,11 @@ class CardDataStructure:
         else:
             self.user = user
 
-        discount_instance = getObject(discount_object, discount)
+        try:
+            discount_instance = getObject(discount_object, discount)
+        except BadRequest:
+            discount_instance = discount_object.getByCode(discount)
+
         if discount_instance.is_valid(self.user):
             self.discount = discount_instance
         else:
