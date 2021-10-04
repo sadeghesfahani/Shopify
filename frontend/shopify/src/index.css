@@ -16,3 +16,7 @@ code {
 .not-rtl{
   direction: ltr;
 }
+
+.rtl{
+  direction: rtl;
+}

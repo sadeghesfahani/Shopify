@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {withRouter} from "react-router-dom"
+import {Link, withRouter} from "react-router-dom"
 import Product from "./Product";
 import Breadcumb from "./Breadcumb";
 import Subcategory from "./Subcategory";
@@ -15,9 +15,11 @@ class Category extends Component {
         parent_category: [],
         products: [],
         page: 1,
-        per_page: 10,
+        per_page: 3,
         order_by: "created_time",
-        total_products: 0
+        total_products: 0,
+        showing_products: [],
+        number_of_pages: 1
     }
 
     async get_category() {
@@ -42,9 +44,7 @@ class Category extends Component {
     }
 
     async get_products() {
-        const low = ((this.state.page - 1) * this.state.per_page)
-        const high = (this.state.page * this.state.per_page) - 1
-        const url = `http://127.0.0.1:8000/product/find/?category=${this.props.match.params.id}&sortby=-${this.state.order_by}&low=${low}&high=${high}&recursive=true`
+        const url = `http://127.0.0.1:8000/product/find/?category=${this.props.match.params.id}&sortby=-${this.state.order_by}&recursive=true`
         const products_raw = await fetch(url)
         const products = await products_raw.json()
         const state_product = []
@@ -52,11 +52,26 @@ class Category extends Component {
             state_product.push(product)
         }
         this.setState({products: state_product})
-        const pagination_url = `http://127.0.0.1:8000/product/find/?category=${this.props.match.params.id}`
-        const pagination_raw = await fetch(pagination_url)
-        const result = await pagination_raw.json()
-        this.setState({total_products: result.length})
+        this.setState({total_products: state_product.length})
+        if(state_product.length>0){
+            this.setState({number_of_pages: Math.ceil(state_product.length / this.state.per_page)})
+        this.generateProductsToShow()
+        }else{
+            this.setState({showing_products:[]})
+        }
 
+
+    }
+
+    generateProductsToShow = () => {
+        var products = []
+        for (let i = this.state.page * this.state.per_page - this.state.per_page; i < this.state.page * this.state.per_page; i++) {
+            if (i<this.state.total_products){
+                products.push(this.state.products[i])
+            }
+
+        }
+        this.setState({showing_products: products})
     }
 
     componentDidMount() {
@@ -75,6 +90,85 @@ class Category extends Component {
         }
     }
 
+    generateClassFirstItem = () => {
+        if (this.state.page === 1) {
+            return "page-item disabled"
+        } else {
+            return "page-item"
+        }
+    }
+    generateClassLastItem = () => {
+        if (this.state.page === this.state.number_of_pages) {
+            return "page-item disabled"
+        } else {
+            return "page-item"
+        }
+    }
+    getItemClasses = (page) => {
+        if (page === this.state.page) {
+            return "page-item active"
+        } else {
+        }
+        return "page-item"
+    }
+    setPage = (page) => {
+        if (page === "next") {
+            if(this.state.page < this.state.number_of_pages){
+                this.setPage(this.state.page+1)
+            }
+        } else if (page === "prev") {
+            if(this.state.page !== 1){
+                this.setPage(this.state.page-1)
+            }
+        } else {
+            this.setState({page: page})
+        }
+
+    }
+    generatePagination = () => {
+        if (this.state.page === 1) {
+            if (this.state.number_of_pages === 1) {
+                var pages = [1]
+            } else if (this.state.number_of_pages === 2) {
+                var pages = [1, 2]
+            } else if (this.state.number_of_pages === 3) {
+                var pages = [1, 2, 3]
+            }
+        } else if (this.state.page === 2) {
+            if (this.state.number_of_pages === 2) {
+                var pages = [1, 2]
+            } else {
+                var pages = [1, 2, 3]
+            }
+        } else {
+            if (this.state.number_of_pages >= this.state.page + 1) {
+                var pages = [this.state.page - 1, this.state.page, this.state.page + 1]
+            } else {
+                var pages = [this.state.page - 1, this.state.page]
+            }
+
+        }
+        return (
+            <nav aria-label="...">
+                <ul className="pagination rtl">
+
+                    <li className={this.generateClassFirstItem()}>
+                        <a  onClick={() => this.setPage("prev")} className="page-link"  tabIndex="-1">قبلی</a>
+                    </li>
+                    {pages.map((page, index) => {
+                        return <li key={index} className={this.getItemClasses(page)}>
+                            <a onClick={() => this.setPage(page)} className="page-link">{page}</a>
+                        </li>
+                    })}
+
+                    <li className={this.generateClassLastItem()}>
+                        <a onClick={() => this.setPage("next")} className="page-link"  tabIndex="-1">بعدی</a>
+                    </li>
+                </ul>
+            </nav>
+        )
+    }
+
     render() {
         // this.call_server()
         return (
@@ -89,7 +183,7 @@ class Category extends Component {
                     </div>
                     <div className='col-md-9'>
                         <div className='row'>
-                            {this.state.products.map((product, index) => {
+                            {this.state.showing_products.map((product, index) => {
                                 return (
                                     <>
                                         <Product key={index} name={product.name}
@@ -102,6 +196,9 @@ class Category extends Component {
                             })}
                         </div>
                     </div>
+                </div>
+                <div className='row'>
+                    {this.generatePagination()}
                 </div>
             </>
         );
