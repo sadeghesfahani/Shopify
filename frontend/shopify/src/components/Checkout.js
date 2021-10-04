@@ -62,7 +62,7 @@ class Checkout extends Component {
         }
         return parseInt((window.option_price + Number(this.state.delivery_price)))
     }
-    generateAllTable=()=>{
+    generateAllTable = () => {
         return (
             <tr>
                 <td>جمع کل کالا:</td>
@@ -77,14 +77,14 @@ class Checkout extends Component {
         return (
             <tr>
                 <td>تخفیف:</td>
-                <td>{parseInt(this.totalPrice() * this.state.discountPercent/100)}</td>
+                <td>{parseInt(this.totalPrice() * this.state.discountPercent / 100)}</td>
                 <td></td>
                 <td></td>
                 <td></td>
             </tr>
         )
     }
-    generateDeliveryTable=()=>{
+    generateDeliveryTable = () => {
         return (
             <tr>
                 <td>هزینه ارسال:</td>
@@ -95,7 +95,7 @@ class Checkout extends Component {
             </tr>
         )
     }
-    generateOptionTable=()=>{
+    generateOptionTable = () => {
         window.basic = 0
         if (this.state.discountValidation) {
             window.basic = this.totalPriceWithDiscount()
@@ -240,14 +240,16 @@ class Checkout extends Component {
             return this.generateLog()
         }
     }
-    addCard=()=> {
-        const data = {discount:this.state.discount,
-            additional_option:this.state.option,
+    addCard = () => {
+        const data = {
+            discount: this.reformatDiscount(),
+            additional_option: this.state.option,
             delivery: this.state.delivery,
             address_to_send_good: this.state.address_to_send,
             address_to_send_invoice: this.state.address_to_invoice,
             receive_time: "2021-11-18 13:24:46",
-            orders:this.reformatOrders()
+            orders: this.reformatOrders(),
+            payment_info: 1
         }
         const option = {
             method: "POST",
@@ -259,23 +261,32 @@ class Checkout extends Component {
             }
         }
         const url = 'http://127.0.0.1:8000/card/card/'
-        fetch(url,option).then(response =>response.json()).then(data=>this.cardAdded(data))
+        fetch(url, option).then(response => response.json()).then(data => this.cardAdded(data))
     }
-    reformatOrders =()=>{
+    reformatDiscount = () => {
+        if (this.state.discountValidation === true) {
+            return this.state.discount
+        } else {
+            return false
+        }
+    }
+    reformatOrders = () => {
         var final_order_list = []
-        for(let order of this.props.orders){
-            if(order.option){
-                final_order_list.push({product:order.product,quantity: order.quantity,option:order.option})
-            }else{
-                final_order_list.push({product:order.product,quantity: order.quantity})
+        for (let order of this.props.orders) {
+            if (order.option) {
+                final_order_list.push({product: order.product, quantity: order.quantity, option: order.option})
+            } else {
+                final_order_list.push({product: order.product, quantity: order.quantity})
             }
         }
         return final_order_list
     }
-    cardAdded =(data)=>{
-        console.log(data)
+    cardAdded = (data) => {
+        if (data.orders) {
+            localStorage.removeItem('card')
+            this.props.updateOrder([])
+        }
     }
-
 
 
     render() {
@@ -283,7 +294,8 @@ class Checkout extends Component {
             <div>
                 {this.generateList()}
                 {this.information()}
-                <button onClick={this.addCard} className='btn btn-primary'>پرداخت</button>
+                {this.props.orders.length > 0 && this.props.loggedIn &&
+                <button onClick={this.addCard} className='btn btn-primary'>پرداخت</button>}
                 {/*{this.props.loggedIn && this.generateCheckout() || this.generateLog()}*/}
 
 
@@ -294,7 +306,7 @@ class Checkout extends Component {
     async componentDidMount() {
         let card = localStorage.getItem('card')
         card = JSON.parse(card)
-        if (card['discount']) {
+        if (card && card['discount']) {
             await this.setState({discount: card['discount']})
             this.checkDiscount()
         }

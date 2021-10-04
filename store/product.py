@@ -18,7 +18,7 @@ class Product(BaseMarketObjectManager):
 
     def filterByCategory(self, category_id, recursive=False):
         if recursive:
-            children = Category().getAllChildren(category_id)
+            children = Category().getAllChildren(category_id,True)
             if children is None or children == []:
                 children = [category_id]
             self.querySet['category_id__in'] = children

@@ -76,6 +76,9 @@ class App extends Component {
                         handleStatus={this.setStatus} user_permission={this.state.user_permission} orders={this.state.orders}/>
                 <div className='container-fluid'>
                     <Switch>
+                        <Route path="/home">
+
+                        </Route>
                         <Route path="/register">
                             <Register handleStatus={this.setStatus} set_user_permission={this.set_user_permission} redirectTo={this.state.redirectTo}/>
                         </Route>

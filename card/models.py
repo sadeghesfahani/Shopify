@@ -95,10 +95,11 @@ class Card(models.Model):
 
     def save(self, *args, **kwargs):
         if self.status == 1:
-            if self.discount.discount_type == self.discount.FIRST_COME_FIRST_SERVE:
-                self.discount.limits -= 1
-            elif self.discount.discount_type == self.discount.USERS:
-                self.discount.users.remove(self.user)
+            if self.discount is not None:
+                if self.discount.discount_type == self.discount.FIRST_COME_FIRST_SERVE:
+                    self.discount.limits -= 1
+                elif self.discount.discount_type == self.discount.USERS:
+                    self.discount.users.remove(self.user)
 
             for order in self.orders.all():
                 order.product.quantity -= order.count

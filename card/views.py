@@ -28,6 +28,9 @@ class CardAPI(viewsets.ViewSet, generics.GenericAPIView):
     def create(self, request):
         newly_added_card = self.card.addNew(user=request.user, **request.data)
         self.card.addOrderToCard(newly_added_card, request.data["orders"])
+        if 'payment_info' in request.data and request.data['payment_info'] == 1:
+            newly_added_card.status = 1
+            newly_added_card.save()
         return Response(self.get_serializer_class()(newly_added_card, many=False).data)
 
     @action(detail=False)

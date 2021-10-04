@@ -30,6 +30,7 @@ class ProductPage extends Component {
         const productInfo = await result.json()
         this.setState({product: productInfo})
         this.setState({option: this.state.product.attributes[0] !== undefined ? this.state.product.attributes[0].options[0] : false})
+
     }
 
     generatePrice = () => {
@@ -113,7 +114,8 @@ class ProductPage extends Component {
                         </>
                     )
                 })}
-                <button onClick={this.handleAddToCard} className='btn btn-primary'>افزوردن به سبد خرید</button>
+                {this.state.product.quantity>0 && <button onClick={this.handleAddToCard} className='btn btn-primary'>افزوردن به سبد خرید</button>}
+                {this.state.product.quantity<=0  && <h5>ناموجود</h5>}
             </div>
         )
     }

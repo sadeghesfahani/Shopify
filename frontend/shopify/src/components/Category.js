@@ -44,7 +44,7 @@ class Category extends Component {
     async get_products() {
         const low = ((this.state.page - 1) * this.state.per_page)
         const high = (this.state.page * this.state.per_page) - 1
-        const url = `http://127.0.0.1:8000/product/find/?category=${this.props.match.params.id}&sortby=-${this.state.order_by}&low=${low}&high=${high}`
+        const url = `http://127.0.0.1:8000/product/find/?category=${this.props.match.params.id}&sortby=-${this.state.order_by}&low=${low}&high=${high}&recursive=true`
         const products_raw = await fetch(url)
         const products = await products_raw.json()
         const state_product = []
@@ -87,17 +87,20 @@ class Category extends Component {
                     <div className='col-12 col-md-3 '>
                         <Subcategory subcategories={this.state.children_category}/>
                     </div>
-                    <div className='col'>
-                    {this.state.products.map((product, index) => {
-                        return (
-                            <>
-                                <Product key={index} name={product.name}
-                                         image={`http://127.0.0.1:8000${product.image}`}
-                                         price={product.price}
-                                         product_id={product.id}/>
-                            </>
-                        )
-                    })}
+                    <div className='col-md-9'>
+                        <div className='row'>
+                            {this.state.products.map((product, index) => {
+                                return (
+                                    <>
+                                        <Product key={index} name={product.name}
+                                                 image={`http://127.0.0.1:8000${product.image}`}
+                                                 price={product.price}
+                                                 product_id={product.id}
+                                                 quantity={product.quantity}/>
+                                    </>
+                                )
+                            })}
+                        </div>
                     </div>
                 </div>
             </>

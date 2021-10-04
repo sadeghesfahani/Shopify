@@ -118,13 +118,15 @@ class CardDataStructure:
         else:
             self.user = user
 
-        try:
-            discount_instance = getObject(discount_object, discount)
-        except BadRequest:
-            discount_instance = discount_object.getByCode(discount)
-
-        if discount_instance.is_valid(self.user):
-            self.discount = discount_instance
+        if discount:
+            try:
+                discount_instance = getObject(discount_object, discount)
+            except BadRequest:
+                discount_instance = discount_object.getByCode(discount)
+            if discount_instance.is_valid(self.user):
+                self.discount = discount_instance
+            else:
+                self.discount = None
         else:
             self.discount = None
 
