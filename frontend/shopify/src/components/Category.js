@@ -55,7 +55,7 @@ class Category extends Component {
         this.setState({total_products: state_product.length})
         if(state_product.length>0){
             this.setState({number_of_pages: Math.ceil(state_product.length / this.state.per_page)})
-        this.generateProductsToShow()
+            this.generateProductsToShow()
         }else{
             this.setState({showing_products:[]})
         }

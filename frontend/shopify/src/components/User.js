@@ -32,8 +32,10 @@ class User extends Component {
     }
     updateAddressForm = (data) => {
         this.setState({address: data})
-        this.props.send(data[0].id)
-        this.props.invoice(data[0].id)
+        if(data[0]){
+            this.props.send(data[0].id)
+            this.props.invoice(data[0].id)
+        }
     }
     handleChange =({currentTarget: input})=>{
         this.setState({[input.id] : input.value})

@@ -74,6 +74,7 @@ class Card(models.Model):
     address_to_send_invoice = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='address_invoice',
                                                 blank=True, null=True)
     receive_time = models.DateTimeField()
+    created_time = models.DateTimeField(auto_now_add=True)
 
     @property
     def total_products_cost(self):

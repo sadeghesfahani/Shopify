@@ -72,8 +72,10 @@ class Card:
         return True if 0 <= status <= 4 else False
 
     @handleError(targetObject)
-    def selectByUser(self, user):
+    def selectByUser(self, user, how_many=False):
         user_to_select_with = getObject(User, user)
+        if how_many:
+            return self.targetObject.objects.filter(user=user_to_select_with)[0:int(how_many)]
         return self.targetObject.objects.filter(user=user_to_select_with)
 
 

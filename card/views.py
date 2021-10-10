@@ -23,6 +23,8 @@ class CardAPI(viewsets.ViewSet, generics.GenericAPIView):
 
     def list(self, request):
         card_object = Card()
+        if request.GET.get('howmany') is not None:
+            return Response(self.get_serializer_class()(card_object.selectByUser(request.user,request.GET.get('howmany')), many=True).data)
         return Response(self.get_serializer_class()(card_object.selectByUser(request.user), many=True).data)
 
     def create(self, request):
