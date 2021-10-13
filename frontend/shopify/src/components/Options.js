@@ -7,12 +7,19 @@ class Options extends Component {
     }
 
     handleDelivery = (data) => {
-        this.setState({delivery: data})
+        if (data[0]){
+
+            this.setState({delivery: data})
         this.props.delivery({id: data[0].id, price: data[0].price})
+        }
+
     }
     handleOption = (data) => {
-        this.setState({option: data})
-        this.props.option({id:data[0].id,type:data[0].option_type,price:data[0].cost})
+        if(data[0]){
+
+            this.setState({option: data})
+            this.props.option({id:data[0].id,type:data[0].option_type,price:data[0].cost})
+        }
     }
     generateDelivery = () => {
         const url = 'http://127.0.0.1:8000/card/delivery/'

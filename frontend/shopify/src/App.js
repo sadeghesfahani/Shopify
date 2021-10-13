@@ -7,6 +7,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import ProductPage from "./components/ProductPage";
 import Checkout from "./components/Checkout";
+import Account from "./components/Account";
 
 
 class App extends Component {
@@ -90,6 +91,9 @@ class App extends Component {
                         </Route>
                         <Route path="/product/:id">
                             <ProductPage updateOrder={this.updateOrder}/>
+                        </Route>
+                        <Route path='/account'>
+                            <Account/>
                         </Route>
                         <Route path="/checkout">
                             <Checkout
